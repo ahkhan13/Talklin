@@ -1,0 +1,276 @@
+
+ {{>navbar}}
+     <div class="container-fluid" style="margin-top:80px;">
+      <div class="row">
+        <div class="col-md-3 friend-suggested-heading">
+         <span class='friends-heading'><i class="fas fa-user-friends mx-2"></i>Suggested Peoples</span>
+         <div id="search-new-friends">
+          <form action="" class='my-2'>
+            <div class="form-group">
+              <input type="text" class='form-control' placeholder='Search friends...'>
+            </div>
+          </form>
+         </div>
+        </div>
+      
+        <div class="col-md-6">
+               <div class="chat-box">
+                   <div class="chat-person-name">
+                    <img src="images/khan4.jpg" alt="" class="chat-profile-pic">
+                     <span class='chat-friends-name'>Aftab Husain</span> <span class="status">Online</span>
+                    </div>
+                <div class="msg">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="reciever-msg">
+                       Hello how are U?
+                       <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="offset-md-6 col-md-6">
+                    <div class="sender-msg">
+                      Nice .. bro and what are you doing? please reply soon..okk
+                      <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="reciever-msg">
+                       Hello how are U?
+                       <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="offset-md-6 col-md-6">
+                    <div class="sender-msg">
+                      Nice ..
+                      <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="reciever-msg">
+                       Hello how are U?
+                       <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="offset-md-6 col-md-6">
+                    <div class="sender-msg">
+                      Nice ..
+                      <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="reciever-msg">
+                       Hello how are U?
+                       <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="offset-md-6 col-md-6">
+                    <div class="sender-msg">
+                      Nice ..
+                      <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="reciever-msg">
+                       Hello how are U?
+                       <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="offset-md-6 col-md-6">
+                    <div class="sender-msg">
+                      Nice and what r u doing..
+                      <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="reciever-msg">
+                       Hello how are U?
+                       <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="offset-md-6 col-md-6">
+                    <div class="sender-msg">
+                      Nice ..
+                      <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="reciever-msg">
+                       Hello how are U?
+                       <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="offset-md-6 col-md-6">
+                    <div class="sender-msg">
+                      Nice ..
+                      <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="reciever-msg">
+                       Hello how are U?
+                       <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                  <div class="offset-md-6 col-md-6">
+                    <div class="sender-msg">
+                      Nice ..
+                      <div class="time">
+                         3:34am
+                       </div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                <div class="chat-btn">
+                  <div class="row">
+                    <div class="col-md-10">
+                    <form>
+           <!-- Search form -->
+              <div class="md-form active-pink active-pink-2 mb-3 mt-0">
+              <input class="form-control" type="text" placeholder="Write Something Here...">
+              </div>
+              </form>
+              </div>
+          <div class="col-md-2">
+          <button class='btn btn-success  btn-block'>Send</button>
+          </div>
+                  </div>
+           
+                </div>
+               
+               </div>
+
+          </div>
+          
+          <div class="col-md-3 friend-suggested-heading">
+         <span class='friends-heading'><i class="fas fa-user-friends mx-2"></i>Friends</span>
+         <div class="search-friends">
+          <form action="" class='my-2'>
+            <div class="form-group">
+              <input type="text" class='form-control' placeholder='Search friends...'>
+            </div>
+          </form>
+         </div>
+      </div>
+   </div>
+</div>
+  <div class="container-fluid my-0">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="friend-suggested-list">
+          {{#each suggestedData}}
+           <div class="friend-suggested-card">
+          <div class="row">
+            <div class="col-md-3">
+             <a href="userProfile?id={{username}}">
+              {{#if userimage}}
+              <div class="profile-pic">
+               <img src="upload/{{userimage}}" alt="" class="friends-profile-pic">
+              </div>
+              {{else}}
+                 <div class="no-profile-pic"></div>
+              {{/if}}
+            </div>
+             <div class="col-md-9">
+               <div class='friends-suggested-name'>{{username}}</div>
+            </a>
+            </div>
+              
+          </div>
+             
+           <div class="row">
+           <div class="offset-md-7 col-md-5">
+            <button class='btn reject-btn btn-danger btn-sm addFriend' id={{username}}>Add Friend</button>
+           </div>
+           </div>
+           </div>
+           {{/each}}
+  </div>
+   </div>
+          <div class="offset-md-6 col-md-3">
+                <div class="friends-list">
+                 {{#each findfriend}}
+                   {{#equal status 1}}
+                   {{#if friendimage}}
+                   <div class="friends-list-card">
+                    <a href="userProfile?"><img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
+                    {{else}}
+                    <div class="no-profile-pic"></div>
+                    {{/if}}
+                     <div class='friends-name'>{{friendname}}</div>
+                     {{else}}
+                     {{/equal}}
+                     <div class="row">
+                       <div class="col-md-2 online">
+                         Online
+                       </div>
+                        <div class="offset-md-6 col-md-4">
+                         <a href="home?{{_id}}" class='btn talk-btn btn-success btn-sm'>Let's Talk</a>
+                      </div> 
+                    </div>
+                   </div>
+                   {{/each}}
+                </div>
+              </div>
+      </div>
+  </div> 
+ 
+      
+</body>
+</html>
+
+<script>
+$(document).ready(function(){
+  $('.addFriend').click(function(){
+    var id = $(this).attr('id');
+    var data = {};
+		data.id = id;
+    $.ajax({
+      url: "/addfriend",
+      method: "POST",
+    	data: JSON.stringify(data),
+			contentType: 'application/json',
+      url:'http://localhost:3000/addFriend',		
+      success: function(data){
+      if(data==1){
+        $('#'+id).html('Requested...');
+        $('#'+id).css('background-color' , 'cyan');
+        $('#'+id).css('color' , 'red');
+      }else{
+        alert("fail");
+      }
+      }
+    })
+    });
+});
+</script>

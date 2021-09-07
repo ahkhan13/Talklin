@@ -1,0 +1,63 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<style>
+ .error{
+    font-size:15px;
+    padding:5px;
+    color:yellow;
+  }
+    body{
+        background:url("images/back.jpg");
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+        background-size:cover;
+        color:snow;
+    }
+    .container{
+        margin-top:130px;
+    }
+    form{
+        padding:40px;
+        background:#303952;
+        opacity:0.9;
+        box-shadow: 20px 30px 0px #130f40 , -20px 30px 0px #130f40;
+    }
+</style>
+<body>
+       <div class="container">
+             <div class="row">
+               <div class="offset-md-4 col-md-4">
+               <form action="/" method="POST">
+                <h1 class="text-center">Login</h1>
+                <div class="form-group">
+                <label for="">Username/Email</label>
+                <input type="text" class="form-control" name="user" id="" aria-describedby="emailHelp" placeholder="Username / Email" required>
+                </div>
+                <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                  <div class="error">{{msg}}</div>
+                </div>
+                <div class="form-group my-3">
+                <input type="submit" class="btn btn-success form-control" value="Login" name="login">
+                </div>
+                <div class="form-group my-3">
+                Not have a account? <span style="font-size:20px"><a href="register">Register</a></span>
+               </div>
+        </form>
+            </div>
+         </div>
+       </div>
+</body>
+</html>

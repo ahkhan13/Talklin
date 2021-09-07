@@ -1,0 +1,106 @@
+
+  {{>navbar}}
+        <div class="container-fluid">
+            <div class="row">
+              <div class="offset-md-1 col-md-2">
+              <span class="friend-request-heading">
+              <i class="fas fa-user-friends mx-2"></i>Friend Requests </span>
+              </div>
+            <div class="col-md-7 my-5">
+              {{msg}}
+              {{#each friendrequest}} 
+              {{#equal status 0}}
+               <div class="friends-list-card">
+                 <div class="row">
+                 <div class="col-md-2 mx-2">
+                 {{#if senderImage}}
+                <a href="userProfile?{{requestSender}}"><img src="upload/{{senderImage}}" alt="" class="friends-profile-pic">
+                {{else}}
+                <div class="no-profile-pic"></div>
+                {{/if}}
+                </div>
+                <div class="col-md-2">
+                  
+                 <div class='friends-name'>{{friendname}}</div></a>
+                </div>
+                </div>
+                <div class="row">
+                    <div class="offset-md-8 col-md-4 ">
+                     <button class='btn talk-btn btn-danger mx-4 reject' data-img="{{friendimage}}" data-name = "{{friendname}}" data-id="{{_id}}" id="reject-{{_id}}">Reject</button>
+                     <button class='btn talk-btn btn-success accept' data-img="{{friendimage}}" data-name = "{{friendname}}" data-id="{{_id}}" id="accept-{{_id}}">Accept</button>
+                     <button class='btn btn-success resultbtn mx-5' id={{_id}} style="display:none;">Accept</button>
+                </div>
+                </div>
+               </div>
+                {{else}}
+                 
+                 {{/equal}}
+              {{/each}}
+             </div>
+            </div>
+            </div>
+           </div>
+       
+</body>
+</html>
+<script>
+$(document).ready(function(){
+  $('.accept').click(function(){
+    var dataId = $(this).attr('id');
+    var dataname = $(this).attr('data-name');
+    var dataimage = $(this).attr('data-img');
+    var id = $(this).attr('data-id');
+    var rejectid="reject-"+id;
+    var data = {};
+		data.id = id;
+    data.dataname= dataname;
+    data.dataimage= dataimage;
+    $.ajax({
+      method: "POST",
+    	data: JSON.stringify(data),
+			contentType: 'application/json',
+      url:'http://localhost:3000/acceptFriend',		
+      success: function(data){
+      if(data==1){
+        $('#'+dataId).hide();
+        $('#'+rejectid).hide();
+        $('#'+id).show().html('Accepted');
+         $('#'+id).css('background-color' , 'cyan');
+        $('#'+id).css('color' , 'red');
+      }else{
+        alert("fail");
+      }
+      }
+    })
+    });
+
+ $('.reject').click(function(){
+    var dataId = $(this).attr('id');
+    var dataname = $(this).attr('data-name');
+    var id = $(this).attr('data-id');
+    var acceptid="accept-"+id;
+    var data = {};
+		data.id = id;
+    data.dataname = dataname;
+    $.ajax({
+      method: "POST",
+    	data: JSON.stringify(data),
+			contentType: 'application/json',
+      url:'http://localhost:3000/rejectFriend',		
+      success: function(data){
+      if(data==1){
+        $('#'+dataId).hide();
+        $('#'+acceptid).hide();
+        $('#'+id).show().html('Rejected');
+         $('#'+id).css('background-color' , 'cyan');
+        $('#'+id).css('color' , 'red');
+      }else{
+        alert("fail");
+      }
+      }
+    })
+    });
+  
+
+});
+</script>
