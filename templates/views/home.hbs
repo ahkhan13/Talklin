@@ -12,12 +12,25 @@
           </form>
          </div>
         </div>
-      
+
         <div class="col-md-6">
                <div class="chat-box">
                    <div class="chat-person-name">
-                    <img src="images/khan4.jpg" alt="" class="chat-profile-pic">
-                     <span class='chat-friends-name'>Aftab Husain</span> <span class="status">Online</span>
+                    
+                    <div class="row">
+                      <div class="col-md-3">
+                        {{#if chatfriendimage}}
+                        <div class="chat-profile-pic">
+                        <img src="upload/{{chatfriendimage}}" alt="" class="chat-profile-pic">
+                        </div>
+                       {{else}}
+                       <div class="no-profile-pic" style="background:snow;"></div>
+                        {{/if}} 
+                      </div>
+                      <div class="col-md-9">
+                       <div class='chat-friends-name'>{{chatfriend}}<span class="status mx-1">Online</span></div>
+                      </div>
+                      </div>
                     </div>
                 <div class="msg">
                 <div class="row">
@@ -32,70 +45,6 @@
                   <div class="offset-md-6 col-md-6">
                     <div class="sender-msg">
                       Nice .. bro and what are you doing? please reply soon..okk
-                      <div class="time">
-                         3:34am
-                       </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="reciever-msg">
-                       Hello how are U?
-                       <div class="time">
-                         3:34am
-                       </div>
-                    </div>
-                  </div>
-                  <div class="offset-md-6 col-md-6">
-                    <div class="sender-msg">
-                      Nice ..
-                      <div class="time">
-                         3:34am
-                       </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="reciever-msg">
-                       Hello how are U?
-                       <div class="time">
-                         3:34am
-                       </div>
-                    </div>
-                  </div>
-                  <div class="offset-md-6 col-md-6">
-                    <div class="sender-msg">
-                      Nice ..
-                      <div class="time">
-                         3:34am
-                       </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="reciever-msg">
-                       Hello how are U?
-                       <div class="time">
-                         3:34am
-                       </div>
-                    </div>
-                  </div>
-                  <div class="offset-md-6 col-md-6">
-                    <div class="sender-msg">
-                      Nice ..
-                      <div class="time">
-                         3:34am
-                       </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="reciever-msg">
-                       Hello how are U?
-                       <div class="time">
-                         3:34am
-                       </div>
-                    </div>
-                  </div>
-                  <div class="offset-md-6 col-md-6">
-                    <div class="sender-msg">
-                      Nice and what r u doing..
                       <div class="time">
                          3:34am
                        </div>
@@ -171,7 +120,6 @@
                </div>
 
           </div>
-          
           <div class="col-md-3 friend-suggested-heading">
          <span class='friends-heading'><i class="fas fa-user-friends mx-2"></i>Friends</span>
          <div class="search-friends">
@@ -218,34 +166,45 @@
   </div>
    </div>
           <div class="offset-md-6 col-md-3">
-                <div class="friends-list">
-                 {{#each findfriend}}
-                   {{#equal status 1}}
-                   {{#if friendimage}}
-                   <div class="friends-list-card">
-                    <a href="userProfile?"><img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
-                    {{else}}
-                    <div class="no-profile-pic"></div>
-                    {{/if}}
-                     <div class='friends-name'>{{friendname}}</div>
-                     {{else}}
-                     {{/equal}}
-                     <div class="row">
-                       <div class="col-md-2 online">
-                         Online
-                       </div>
-                        <div class="offset-md-6 col-md-4">
-                         <a href="home?{{_id}}" class='btn talk-btn btn-success btn-sm'>Let's Talk</a>
-                      </div> 
-                    </div>
+                 {{#each findfriend}}      
+                {{#equal status 1}}  
+               <div class="friends-list-card">
+                  <div class="row">
+                     <div class="col-md-3">
+                          <a href="profile?friend={{_id}}">
+                        {{#if friendimage}}
+                        <div class="profile-pic">
+                            <img src="images/khan4.jpg" alt="" class="friends-profile-pic">
+                        </div>
+                       {{else}}
+                       <div class="no-profile-pic"></div>
+                      {{/if}}
+                     </div>
+                     <div class="offset-md-2 col-md-7">
+                       <div class='friends-name'>{{friendname}}</div></a>
+                     </div>
                    </div>
-                   {{/each}}
+                 <div class="row mx-1">
+                   <div class="col-md-3 online">
+                     Online
+                   </div>
+                    <div class="offset-md-4 col-md-5">
+                     <a href="home?friend={{friendname}}" class='btn btn-sm talk-btn btn-success mx-1'>Let's Talk</a>
+                    </div> 
                 </div>
-              </div>
+               </div>
+               {{else}}
+               <div class="error">
+                 No friend found 
+               </div>
+               {{/equal}}
+               {{/each}}
+                
+                 
+             </div>
+          </div>
       </div>
-  </div> 
- 
-      
+  </div>     
 </body>
 </html>
 

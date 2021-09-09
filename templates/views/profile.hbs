@@ -28,26 +28,32 @@
                 </div>
             </div>
             <div class="col-md-6">
-         
-
-  
             <div class="">
                 {{#each findfriend}}      
                 {{#equal status 1}}  
                <div class="friends-list-card">
-                 {{#if friendimage}}
-                <a href="profile?"><img src="images/khan4.jpg" alt="" class="friends-profile-pic">
-                {{else}}
-                <div class="no-profile-pic"></div>
-                {{/if}}
-                 <span class='friends-name'>{{friendname}}</span></a>
-                 <div class="row">
-                   <div class="col-md-2 online">
+                  <div class="row">
+                     <div class="col-md-3">
+                          <a href="profile?">
+                        {{#if friendimage}}
+                        <div class="profile-pic">
+                            <img src="images/khan4.jpg" alt="" class="friends-profile-pic">
+                        </div>
+                       {{else}}
+                       <div class="no-profile-pic"></div>
+                      {{/if}}
+                     </div>
+                     <div class="col-md-9">
+                       <div class='friends-name'>{{friendname}}</div></a>
+                     </div>
+                   </div>
+                 <div class="row mx-1">
+                   <div class="col-md-3 online">
                      Online
                    </div>
-                    <div class="offset-md-7 col-md-3">
+                    <div class="offset-md-6 col-md-3">
                      <a href="home?{{_id}}" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
+                    </div> 
                 </div>
                </div>
                {{else}}

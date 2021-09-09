@@ -42,11 +42,19 @@ app.get("/home", auth, async(req,res)=>{
         ]},
         {status:status}
     ]}); */
+    const friend = req.query.friend;
+    console.log(friend);
+    if(friend){
+    const fetch = await User.findOne({username: friend});
+    res.render("home", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist, chatfriend : fetch.username, chatfriendimage:fetch.userimage}); 
+    }
+    else {
     if(suggestedPeople){
         res.render("home", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist});   
     }else{
         res.render("home", {suggestedData : suggestedPeople,  findfriend: fetchdata.friendlist});
     }
+}
 });
  
 app.get("/profile", auth, async (req,res)=>{

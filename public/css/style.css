@@ -152,12 +152,13 @@ a:hover{
       color:snow;
       font-size:18px;
       font-weight:500;
-      margin-right:4px;
+      margin:17px 0px 0px -80px;
   }
 
 .status{
     color:greenyellow;
-    font-weight:500;
+    font-size: 13px;
+    font-weight:450;
 }
 .msg{
   padding:20px;
@@ -290,7 +291,7 @@ a:hover{
 color:rgba(4, 73, 103, 0.83);
 font-size:16px;
 font-weight:500;
-margin:20px 0px 0px 0px;
+margin:24px 0px 0px -40px;
 transition: all 0.3s ease;
 text-decoration:none;
 }
@@ -315,16 +316,16 @@ cursor:pointer;
 
 .chat-profile-pic{
   display: inline-block;
-  width: 60px;
-  height: 60px;
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
   object-fit: cover;
   transition:all 0.5s ease;
 } 
 .no-profile-pic{
   display: inline-block;
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: #2f3640;
   opacity: 0.7;
@@ -414,13 +415,7 @@ font-weight:600;
   font-weight:600;
 }
 
-.friends-name{
-color:rgba(4, 73, 103, 0.83);
-font-size:16px;
-font-weight:500;
-margin-right:4px;
-text-decoration:none;
-}
+
 .friend-search{
 font-size:30px;
 color:rgba(4, 73, 103, 0.83);
