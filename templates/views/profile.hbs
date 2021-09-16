@@ -1,10 +1,11 @@
 
      
     {{>navbar}}
+     
         <div class="container">
             <div class="row">
-              <div class="col-md-6">
-                <div class="profile">
+              <div class="offset-md-1 col-md-3">
+                <div class="profile my-4">
                   {{#if userimage}}
                   <div class="profile-img">
                     <img src="upload/{{userimage}}" alt="profile-image" class='profile-img'>   
@@ -15,7 +16,7 @@
                   <div class="profile-name">
                      {{username}}
                   </div>
-                  <button class='btn btn-sm btn-danger edit-profile-btn' id="btn" onclick="show()">Edit Profile</button>
+                  <button class='edit-profile-btn mx-4' id="btn" onclick="show()">Edit Profile</button>
                   <div class="profile-desc">
                       <ul>
                           <li>{{nickname}}</li>
@@ -27,6 +28,10 @@
                   </div>
                 </div>
             </div>
+            <div class="col-md-2">
+                <span class="friend-request-heading">
+              <i class="fas fa-user-friends mx-2"></i>Friends</span>
+            </div>
             <div class="col-md-6">
             <div class="">
                 {{#each findfriend}}      
@@ -34,25 +39,25 @@
                <div class="friends-list-card">
                   <div class="row">
                      <div class="col-md-3">
-                          <a href="profile?">
+                          <a href="userProfile?id={{friendname}}">
                         {{#if friendimage}}
                         <div class="profile-pic">
-                            <img src="images/khan4.jpg" alt="" class="friends-profile-pic">
+                            <img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
                         </div>
                        {{else}}
                        <div class="no-profile-pic"></div>
-                      {{/if}}
+                       {{/if}}
                      </div>
                      <div class="col-md-9">
                        <div class='friends-name'>{{friendname}}</div></a>
                      </div>
                    </div>
-                 <div class="row mx-1">
+                 <div class="row">
                    <div class="col-md-3 online">
                      Online
                    </div>
                     <div class="offset-md-6 col-md-3">
-                     <a href="home?{{_id}}" class='btn talk-btn btn-success'>Let's Talk</a>
+                     <a href="home?friend={{friendname}}" class='talk-btn'>Let's Talk</a>
                     </div> 
                 </div>
                </div>
@@ -91,7 +96,7 @@
                           <textarea type="text" class='form-control' placeholder="Description" rows="3" name='desc'  value=""> {{description}} </textarea>
                        </div>
                        <div class="form-group">
-                          <input type="submit" class='form-control btn btn-success' value="Upload">
+                          <input type="submit" class='form-control' value="Upload" id='profile-upload-btn'>
                        </div>
                        </form>
                        <div class="form-group my-4">

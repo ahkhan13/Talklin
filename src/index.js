@@ -6,7 +6,7 @@ const hbs=require("hbs");
 const cookieParser = require("cookie-parser");
 const User = require('./modals/userSchema');
 const Profile = require('./modals/profileSchema');
-const Friend = require('./modals/friendSchema');
+const Chatmsg = require('./modals/chatSchema');
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
 //const upload = require({dest : 'uploads/'});
@@ -26,6 +26,7 @@ const { profile } = require('console');
 app.use(express.urlencoded({extended:false}));
 hbs.registerHelper("equal", require("handlebars-helper-equal"));
 //console.log(process.env.SECRET_KEY); 
+
 app.get("/", (req,res)=>{
     res.render("index");
 });
@@ -34,21 +35,32 @@ app.get("/register", (req,res)=>{
 });
 
 app.get("/home", auth, async(req,res)=>{
-    const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
-    const fetchdata = await User.findOne({username:req.user.username});
-    /*const friend = await Friend.find({$and: [
-        {$or :[
-            {requestSender: req.user.username} , {requestReciever: req.user.username}
-        ]},
-        {status:status}
-    ]}); */
+   
+   
     const friend = req.query.friend;
-    console.log(friend);
+    //console.log(friend);
     if(friend){
     const fetch = await User.findOne({username: friend});
-    res.render("home", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist, chatfriend : fetch.username, chatfriendimage:fetch.userimage}); 
+        if(fetch){
+            const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
+            const fetchdata = await User.findOne({username:req.user.username});
+            const fetchmsg = await Chatmsg.find({$or:[
+                                             {$and:[{sender:req.user.username}, {reciever:friend}]}, 
+                                             {$and:[{sender:friend}, {reciever:req.user.username}]}]});
+            res.render("home", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist, chatfriend : fetch.username, chatimage:fetch.userimage, chatmsg : fetchmsg});
+        }else{
+            const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
+            const fetchdata = await User.findOne({username:req.user.username});
+            if(suggestedPeople){
+                res.render("home", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist});   
+            }else{
+                res.render("home", {suggestedData : suggestedPeople,  findfriend: fetchdata.friendlist});
+            }
+        }
     }
     else {
+    const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
+    const fetchdata = await User.findOne({username:req.user.username});
     if(suggestedPeople){
         res.render("home", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist});   
     }else{
@@ -85,41 +97,53 @@ app.get("/profile", auth, async (req,res)=>{
 app.get("/userProfile", auth, async (req,res)=>{
     try{
     var user=req.query.id;
-        const fetchdata = await User.findOne({username:user});
-        if(fetchdata){
-           res.render("userProfile", {
-               username: fetchdata.username,
-               college: fetchdata.college,
-               nickname:fetchdata.nickname,
-               userimage: fetchdata.userimage,
-               occupation: fetchdata.occupation,
-               address: fetchdata.address,
-               description:fetchdata.description
-          }); 
+        const status=1;
+        const checkfriend = await User.findOne({$and : [{username:user}, {'friendlist.friendname':req.user.username}, {'friendlist.status':status}]});
+        if(checkfriend){
+          //const fetchdata = await User.findOne({username:user});
+               res.render("userProfile", {
+                   username: checkfriend.username,
+                   college: checkfriend.college,
+                   nickname:checkfriend.nickname,
+                   userimage: checkfriend.userimage,
+                   occupation: checkfriend.occupation,
+                   address: checkfriend.address,
+                   description:checkfriend.description,
+                   fetchfriend:checkfriend.friendlist,
+                   friend:"Friend"
+              }); 
+            
         }else{
-           res.render("userProfile", {username:req.user.username});
-        }  
-     }
+            const fetchdata = await User.findOne({username:user});
+            console.log(fetchdata.friendlist);
+            res.render("userProfile", {
+                username: fetchdata.username,
+                college: fetchdata.college,
+                nickname:fetchdata.nickname,
+                userimage: fetchdata.userimage,
+                occupation: fetchdata.occupation,
+                address: fetchdata.address,
+                description:fetchdata.description,
+                fetchfriend:fetchdata.friendlist,
+                friend:"Add-Friend"
+           }); 
+        }
+    }
     catch(err){
     console.log(err);
    }
-}
-);
+
+});
 //to get profile
 
 app.get("/friend-request", auth, async(req,res)=>{
     const status=0;
     const finddata = await User.findOne({username:req.user.username});
-    if(finddata){
-        res.render("friend-request", {friendrequest : finddata.friendlist});
-    }else{
-        res.render("friend-request", {msg : "No requset Found"});
-    }
-   
+    res.render("friend-request", {friendrequest : finddata.friendlist});
 });
 
 app.get("/logout", auth, async(req,res)=>{
-    // logout from curren device
+    // logout from current device
     req.user.tokens=req.user.tokens.filter((currElement)=>{
     return currElement.token != req.token
     })
@@ -246,6 +270,11 @@ app.post('/profile', [upload, auth], async(req,res, next)=>{
       }
       if(result){
           if(req.file){
+            const status = 1;
+            const updateimage = {friendimage:req.file.filename, friendname:req.user.username, status:status};
+            const updateinfriend = await User.findOneAndUpdate({$and : [{'friendlist.status': status},{'friendlist.friendname':req.user.username}]}, {$set : {
+                 'friendlist.$':updateimage 
+            }});
             const updatedata = await User.updateOne({username:req.user.username}, 
                 {$set : { 
                 userimage:req.file.filename,
@@ -367,10 +396,11 @@ app.post('/addFriend',auth, async(req,res)=>{
             status:status
         });
         const save = await data.save();  */
-        const friendsdata = {friendname:sender, friendimage: senderimage, status : status,};
+        const friendsdata = {friendname:sender, friendimage: senderimage, status : status};
         const savedata = await User.findOneAndUpdate({username:reciever}, {$push:{
             friendlist:friendsdata
         }});
+        console.log(friendsdata);
         if(savedata){
             res.send("1");
         }else{
@@ -385,12 +415,9 @@ app.post('/acceptFriend',auth, async(req,res)=>{
     try{
         const sender = req.body.id;
         const sendername = req.body.dataname;
-        const senderimage = req.body.dataimage;
         const status = 1;
-        /*const updatedata = await Friend.updateOne({_id:sender}, {$set: {
-         status : status
-        }});
-        */
+        const fetchdata = await User.findOne({username:sendername});
+        const senderimage = fetchdata.userimage;
        const update = {friendname: sendername, friendimage: senderimage, status : status};
        const updatedata = await User.updateOne({$and : [{username:req.user.username}, {'friendlist._id': sender}]}, {'$set': {
             'friendlist.$' : update
@@ -436,10 +463,53 @@ app.post('/rejectFriend',auth, async(req,res)=>{
     }
 });
 
-
-
-
 app.use(express.static(staticPath));
-app.listen(3000,()=>{
+const server  = app.listen(3000,()=>{ 
     console.log("Success at port 3000");
+})
+
+
+const io = require('socket.io')(server);
+var users={};
+
+io.on('connection', (socket)=>{
+
+    //console.log(socket.id);
+    socket.on("New-user-joined", (username)=>{
+         users[username]=socket.id;
+         socket.broadcast.emit('user-connected', username);
+    })
+
+     socket.on('disconnect', ()=>{
+         socket.broadcast.emit('user-disconnected', user=users[socket.id]);
+         delete users[socket.id];
+         //io.emit('user-list', users);
+     })
+
+     socket.on('message', async(data)=>{
+        const socketid = users[data.to];
+        const chatmsg = new Chatmsg({
+            sender:data.from, 
+            reciever:data.to,
+            messages:data.msg,
+            time:data.time
+        });
+        const savemsg = await chatmsg.save();
+        if(chatmsg){
+         io.to(socketid).emit("message", {user:data.from, msg:data.msg, time:data.time});
+        }else{
+            console.log("error");
+        }
+     });
+   
+     socket.on('onfocus', (data)=>{
+        const socketid = users[data.to];
+        io.to(socketid).emit("onfocus", {user:data.from, msg:data.msg});
+    });
+
+     socket.on('onfocusout', (data)=>{
+        const socketid = users[data.to];
+        io.to(socketid).emit("onfocusout", {user:data.from, msg:data.msg});
+    });
+
 })

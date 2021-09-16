@@ -1,12 +1,39 @@
 
-     
+    <style>
+  #friend{
+  background:#ffffff;
+  color:#833471;
+  border: 1px solid #833471;
+  border-radius:3px;
+  font-weight: 600;
+  margin-left: 40px;
+  padding: 8px 20px 8px 20px;
+  box-shadow: 0px 2px 3px rgba(0,0,0,0.2);
+  cursor: not-allowed;
+}
+#Add-Friend{
+  background:#833471;
+  color:#ffffff;
+  border-radius: 3px;
+  font-weight: 500;
+  padding: 8px 20px 8px 20px;
+  border:none;
+  margin-left: 30;
+  box-shadow: 0px 2px 3px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+#Add-Friend:hover{
+  background:#1289A7;
+}
+    </style> 
     {{>navbar}}
         <div class="container">
             <div class="row">
-              <div class="col-md-4">
+              <div class="offset-md-1 col-md-3">
                 <div class="profile">
                   {{#if userimage}}
-                  <div class="profile-img">
+                  <div class="profile-img my-4">
                     <img src="upload/{{userimage}}" alt="profile-image" class='profile-img'>   
                   </div>
                   {{else}}
@@ -15,7 +42,7 @@
                   <div class="profile-name mx-5">
                      {{username}}
                   </div>
-                  <button class='btn btn-danger mx-4' id="btn">Add Friend</button>
+                  <button class='' id="{{friend}}">{{friend}}</button>
                   <div class="profile-desc">
                       <ul>
                           <li>{{nickname}}</li>
@@ -27,148 +54,40 @@
                   </div>
                 </div>
             </div>
-            <div class="offset-md-2 col-md-6">
+            
+            <div class="col-md-2">
+               <span class="friend-request-heading">
+              <i class="fas fa-user-friends mx-2"></i>Friends</span>
+            </div>
+              
+            <div class="col-md-6 my-4">
             <div class="">
-                       
+              {{#each fetchfriend}}      
+                {{#equal status 1}}
                <div class="friends-list-card">
-                <a href="profile?"><img src="images/khan4.jpg" alt="" class="friends-profile-pic">
-                 <span class='friends-name'>Aftab Husain</span></a>
-                 <div class="row">
-                   <div class="col-md-2 online">
-                     Online
+                  <div class="row">
+                     <div class="col-md-3">
+                          <a href="userProfile?id={{friendname}}">
+                        {{#if friendimage}}
+                        <div class="profile-pic">
+                            <img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
+                        </div>
+                       {{else}}
+                       <div class="no-profile-pic"></div>
+                       {{/if}}
+                     </div>
+                     <div class="col-md-9">
+                       <div class='friends-name'>{{friendname}}</div></a>
+                     </div>
                    </div>
-                    <div class="offset-md-7 col-md-3">
-                     <a href="home?" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
-                </div>
+                
                </div>
-               <div class="friends-list-card">
-                <a href="profile?"><img src="images/khan4.jfif" alt="" class="friends-profile-pic">
-                 <span class='friends-name'>Aftab Husain</span></a>
-                 <div class="row">
-                   <div class="col-md-2 online">
-                     Online
-                   </div>
-                    <div class="offset-md-7 col-md-3">
-                     <a href="home?" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
-                </div>
-               </div>
-
-               <div class="friends-list-card">
-                <a href="profile?"><img src="images/khan6.jpg" alt="" class="friends-profile-pic">
-                 <span class='friends-name'>Aftab Husain</span></a>
-                 <div class="row">
-                 <div class="col-md-2 offline">
-                     Offline
-                   </div>
-                    <div class="offset-md-7 col-md-3">
-                     <a href="home?" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
-                </div>
-               </div>
-               <div class="friends-list-card">
-                <a href="profile?"><img src="images/khan7.jpg" alt="" class="friends-profile-pic">
-                 <span class='friends-name'>Aftab Husain</span></a>
-                 <div class="row">
-                   <div class="col-md-2 online">
-                     Online
-                   </div>
-                    <div class="offset-md-7 col-md-3">
-                     <a href="home?" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
-                </div>
-               </div>
-
-               <div class="friends-list-card">
-                <a href="profile?"><img src="images/khan8.jpg" alt="" class="friends-profile-pic">
-                 <span class='friends-name'>Aftab Husain</span></a>
-                 <div class="row">
-                 <div class="col-md-2 offline">
-                     Offline
-                   </div>
-                    <div class="offset-md-7 col-md-3">
-                     <a href="home?" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
-                </div>
-               </div>
-               <div class="friends-list-card">
-                <a href="profile?"><img src="images/khan2.jfif" alt="" class="friends-profile-pic">
-                 <span class='friends-name'>Aftab Husain</span></a>
-                 <div class="row">
-                   <div class="col-md-2 online">
-                     Online
-                   </div>
-                    <div class="offset-md-7 col-md-3">
-                     <a href="home?" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
-                </div>
-               </div>
-
-               <div class="friends-list-card">
-                <a href="profile?"><img src="images/khan4.jfif" alt="" class="friends-profile-pic">
-                 <span class='friends-name'>Aftab Husain</span></a>
-                 <div class="row">
-                 <div class="col-md-2 offline">
-                     Offline
-                   </div>
-                    <div class="offset-md-7 col-md-3">
-                     <a href="home?" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
-                </div>
-               </div>
-               <div class="friends-list-card">
-                <a href="profile?"><img src="images/khan1.jpg" alt="" class="friends-profile-pic">
-                 <span class='friends-name'>Aftab Husain</span></a>
-                 <div class="row">
-                   <div class="col-md-2 online">
-                     Online
-                   </div>
-                    <div class="offset-md-7 col-md-3">
-                     <a href="home?" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
-                </div>
-               </div>
-
-               <div class="friends-list-card">
-                <a href="profile?"><img src="images/khan2.jfif" alt="" class="friends-profile-pic">
-                 <span class='friends-name'>Aftab Husain</span></a>
-                 <div class="row">
-                 <div class="col-md-2 offline">
-                     Offline
-                   </div>
-                    <div class="offset-md-7 col-md-3">
-                     <a href="home?" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
-                </div>
-               </div>
-               <div class="friends-list-card">
-                <a href="profile?"><img src="images/khan4.jpg" alt="" class="friends-profile-pic">
-                 <span class='friends-name'>Aftab Husain</span></a>
-                 <div class="row">
-                   <div class="col-md-2 online">
-                     Online
-                   </div>
-                    <div class="offset-md-7 col-md-3">
-                     <a href="home?" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
-                </div>
-               </div>
-
-               <div class="friends-list-card">
-                <a href="profile?"><img src="images/khan4.jpg" alt="" class="friends-profile-pic">
-                 <span class='friends-name'>Aftab Husain</span></a>
-                 <div class="row">
-                 <div class="col-md-2 offline">
-                     Offline
-                   </div>
-                    <div class="offset-md-7 col-md-3">
-                     <a href="home?" class='btn talk-btn btn-success'>Let's Talk</a>
-                  </div> 
-                </div>
-               </div>
+             {{else}}
+               {{/equal}}
+               {{/each}}
             </div>
             </div>
+             
            </div>
         </div>     
 </body>
