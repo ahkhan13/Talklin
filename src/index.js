@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const User = require('./modals/userSchema');
 const Profile = require('./modals/profileSchema');
 const Chatmsg = require('./modals/chatSchema');
+const Notify = require('./modals/notifySchema');
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
 //const upload = require({dest : 'uploads/'});
@@ -35,8 +36,6 @@ app.get("/register", (req,res)=>{
 });
 
 app.get("/home", auth, async(req,res)=>{
-   
-   
     const friend = req.query.friend;
     //console.log(friend);
     if(friend){
@@ -44,11 +43,132 @@ app.get("/home", auth, async(req,res)=>{
         if(fetch){
             const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
             const fetchdata = await User.findOne({username:req.user.username});
+            var lastTime = fetch.time;
+            var lastDay = fetch.day;
+            var lastDate = fetch.date;
+            var lastMonth = fetch.month;
+            var lastYear = fetch.year;
+            var userstatus = fetch.userstatus;
+            var currTime = new Date();
+            var currDay  = currTime.getDay();
+            var currDate  = currTime.getDate();
+            var currMonth = currTime.getMonth();
+            var currYear = currTime.getFullYear();
+            console.log(userstatus);
+      
+            if(Math.abs(currDay-lastDay)==0 && Math.abs(currDate-lastDate)==0 && Math.abs(currMonth-lastMonth)==0  && Math.abs(currYear-lastYear)==0){
+                    lastDay="today";
+                    lastMonth="";
+                    lastYear="";
+                    lastDate="";
+            }else if(Math.abs(currDate-lastDate)==1 && Math.abs(currMonth-lastMonth)==0  && Math.abs(currYear-lastYear)==0){
+                lastDay="yesterday";
+                lastMonth="";
+                lastYear="";
+                lastDate="";
+            }else if(Math.abs(currYear-lastYear)==0){
+                lastYear="";
+                if(lastMonth==0){
+                    lastMonth="Jan"
+                }else if(lastMonth==1){
+                    lastMonth='Feb';
+                }
+                else if(lastMonth==2){
+                    lastMonth='Mar';
+                }else if(lastMonth==3){
+                    lastMonth='Apr';
+                }else if(lastMonth==4){
+                    lastMonth='May';
+                }else if(lastMonth==5){
+                    lastMonth='Jun';
+                }else if(lastMonth==6){
+                    lastMonth='Jul';
+                }else if(lastMonth==7){
+                    lastMonth='Aug';
+                }else if(lastMonth==8){
+                    lastMonth='Sep';
+                }else if(lastMonth==9){
+                    lastMonth='Oct';
+                }else if(lastMonth==10){
+                    lastMonth='Nov';
+                }else if(lastMonth==11){
+                    lastMonth='Dec';
+                }
+                if(lastDay==0){
+                    lastDay='Sun';
+                }else if(lastDay==1){
+                    lastDay='Mon';
+                }
+                else if(lastDay==2){
+                    lastDay='Tue';
+                }
+                else if(lastDay==3){
+                    lastDay='Wed';
+                }
+                else if(lastDay==4){
+                    lastDay='Thu';
+                }
+                else if(lastDay==5){
+                    lastDay='Fri';
+                }else if(lastDay==6){
+                    lastDay='Sat';
+                }
+            }else{
+                lastYear=lastYear;
+                if(lastMonth==0){
+                    lastMonth="Jan"
+                }else if(lastMonth==1){
+                    lastMonth='Feb';
+                }
+                else if(lastMonth==2){
+                    lastMonth='Mar';
+                }else if(lastMonth==3){
+                    lastMonth='Apr';
+                }else if(lastMonth==4){
+                    lastMonth='May';
+                }else if(lastMonth==5){
+                    lastMonth='Jun';
+                }else if(lastMonth==6){
+                    lastMonth='Jul';
+                }else if(lastMonth==7){
+                    lastMonth='Aug';
+                }else if(lastMonth==8){
+                    lastMonth='Sep';
+                }else if(lastMonth==9){
+                    lastMonth='Oct';
+                }else if(lastMonth==10){
+                    lastMonth='Nov';
+                }else if(lastMonth==11){
+                    lastMonth='Dec';
+                }
+                if(lastDay==0){
+                    lastDay='Sun';
+                }else if(lastDay==1){
+                    lastDay='Mon';
+                }
+                else if(lastDay==2){
+                    lastDay='Tue';
+                }
+                else if(lastDay==3){
+                    lastDay='Wed';
+                }
+                else if(lastDay==4){
+                    lastDay='Thu';
+                }
+                else if(lastDay==5){
+                    lastDay='Fri';
+                }else if(lastDay==6){
+                    lastDay='Sat';
+                }
+            }
+
+          
+
             const fetchmsg = await Chatmsg.find({$or:[
-                                             {$and:[{sender:req.user.username}, {reciever:friend}]}, 
-                                             {$and:[{sender:friend}, {reciever:req.user.username}]}]});
-            res.render("home", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist, chatfriend : fetch.username, chatimage:fetch.userimage, chatmsg : fetchmsg});
-        }else{
+                                                {$and:[{sender:req.user.username}, {reciever:friend}]}, 
+                                                {$and:[{sender:friend}, {reciever:req.user.username}]}]});
+            res.render("home", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist, chatfriend : fetch.username,userstatus:userstatus, chatimage:fetch.userimage, chatmsg : fetchmsg, lastDay:lastDay,lastDate:lastDate,lastMonth:lastMonth, lastTime:lastTime, lastYear:lastYear});
+          }else{
             const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
             const fetchdata = await User.findOne({username:req.user.username});
             if(suggestedPeople){
@@ -139,11 +259,18 @@ app.get("/userProfile", auth, async (req,res)=>{
 app.get("/friend-request", auth, async(req,res)=>{
     const status=0;
     const finddata = await User.findOne({username:req.user.username});
-    res.render("friend-request", {friendrequest : finddata.friendlist});
+    res.render("friend-request", {friendrequest : finddata.friendlist, username:req.user.username});
 });
 
+app.get("/notification", auth, async(req,res)=>{
+     const status = 0;
+     const findNotify = await Notify.find({$and : [{reciever:req.user.username}, {status:status}]});
+     console.log(findNotify)
+     res.render("notification", {notification:findNotify});
+})
 app.get("/logout", auth, async(req,res)=>{
     // logout from current device
+   
     req.user.tokens=req.user.tokens.filter((currElement)=>{
     return currElement.token != req.token
     })
@@ -151,8 +278,10 @@ app.get("/logout", auth, async(req,res)=>{
     req.user.tokens=[];
     res.clearCookie("jwt");
     await req.user.save();
+
     res.render("index"); 
 });
+
 app.post("/register", async(req,res)=>{
     try{
          const password = req.body.password;
@@ -172,11 +301,18 @@ app.post("/register", async(req,res)=>{
             res.render('register',{msg: 'Email already exists'});
         }
         })
+        
          if(password===cpassword){
          const user = new User({
          username : req.body.name,
          useremail : req.body.email,
          userpassword : req.body.password,
+         userstatus:"",
+         time:"",
+         day:"",
+         date:"",
+         month:"",
+         year:"",
          userimage:"",
          nickname:"",
          college:"",
@@ -209,6 +345,8 @@ app.post("/", async(req, res)=>{
       const ismatchemail = await User.findOne({useremail:user});
       //console.log(ismatchuser);
       //console.log(ismatchemail);
+
+
      
       if(ismatchuser){
         const authToken = await ismatchuser.generateToken();
@@ -221,6 +359,8 @@ app.post("/", async(req, res)=>{
            if(isMatchpassword){
            // const suggestedPeople = await User.find({username : {$ne : ismatchuser.username}});
            // res.render("home", {suggestedData : suggestedPeople});
+          // const update = {friendname: sendername, friendimage: senderimage, status : status};
+         
            const suggestedPeople = await User.find({$and : [{username : {$ne : user}}, {'friendlist.friendname' : {$ne : user}}]});
            const fetchdata = await User.findOne({username:user});
            res.render("home", {suggestedData : suggestedPeople, username:user, findfriend: fetchdata.friendlist});  
@@ -386,22 +526,22 @@ app.post('/addFriend',auth, async(req,res)=>{
         const reciever = req.body.id;
         const sender = req.user.username;
         const status = 0;
+        const recieverdata = await User.findOne({_id:reciever});
         const readdata = await User.findOne({username:sender});
         const senderimage = readdata.userimage;
-        /*
-        const data = new Friend({
-            requestSender:sender,
-            requestReciever:reciever,
-            senderImage:senderImage,
-            status:status
-        });
-        const save = await data.save();  */
-        const friendsdata = {friendname:sender, friendimage: senderimage, status : status};
-        const savedata = await User.findOneAndUpdate({username:reciever}, {$push:{
+        const friendsdata = {friendname:sender, friendimage: senderimage, status : status, userstatus:"Online"};
+        const savedata = await User.findOneAndUpdate({_id:reciever}, {$push:{
             friendlist:friendsdata
         }});
-        console.log(friendsdata);
         if(savedata){
+            const messages = `${sender} has sent you friend request`;
+            const notify = new Notify({
+                sender:sender,
+                reciever:recieverdata.username,
+                message:messages,
+                status:0
+            });
+            const savenotification=await notify.save();
             res.send("1");
         }else{
             res.send("0");
@@ -416,17 +556,13 @@ app.post('/acceptFriend',auth, async(req,res)=>{
         const sender = req.body.id;
         const sendername = req.body.dataname;
         const status = 1;
-        const fetchdata = await User.findOne({username:sendername});
-        const senderimage = fetchdata.userimage;
-       const update = {friendname: sendername, friendimage: senderimage, status : status};
-       const updatedata = await User.updateOne({$and : [{username:req.user.username}, {'friendlist._id': sender}]}, {'$set': {
-            'friendlist.$' : update
+        const updatedata = await User.findOneAndUpdate({$and : [{username:req.user.username}, {'friendlist._id': sender}]}, {'$set': {
+            'friendlist.$.status' : status
            }});
-        console.log(updatedata);
         if(updatedata){
             const find = await User.findOne({username:req.user.username});
             const findimage = find.userimage;
-            const friendsdata = {friendname:req.user.username, friendimage : findimage, status : status};
+            const friendsdata = {friendname:req.user.username, friendimage : findimage, status : status, userstatus:"Online"};
             const savedata = await User.findOneAndUpdate({username:sendername}, {$push:{
                 friendlist:friendsdata
             }});
@@ -467,25 +603,57 @@ app.use(express.static(staticPath));
 const server  = app.listen(3000,()=>{ 
     console.log("Success at port 3000");
 })
-
-
 const io = require('socket.io')(server);
 var users={};
 
 io.on('connection', (socket)=>{
 
-    //console.log(socket.id);
-    socket.on("New-user-joined", (username)=>{
+         socket.on("New-user-joined", async(username)=>{
          users[username]=socket.id;
+         const updatestatus = await User.updateOne({username:username}, {$set:{
+            userstatus:"Online"
+         }})
+         const updatedata = await User.updateMany({'friendlist.friendname': username}, {'$set' : {
+         'friendlist.$.userstatus' : "Online"
+        }});
          socket.broadcast.emit('user-connected', username);
     })
-
-     socket.on('disconnect', ()=>{
-         socket.broadcast.emit('user-disconnected', user=users[socket.id]);
-         delete users[socket.id];
-         //io.emit('user-list', users);
-     })
-
+    socket.on('disconnect', async()=>{
+        try{
+        for (var prop in users) {
+            if (users.hasOwnProperty(prop)) {
+                if (users[prop] === socket.id){
+                    var disconnected_user = prop;
+                }
+            }
+        }
+        var dt = new Date();
+        var hour = dt.getHours();
+        var am_pm = hour > 12 ? "pm" : "am";
+        var time = dt.getHours() + ":" + dt.getMinutes()+" "+am_pm;
+        var currDay = dt.getDay();
+        var currDate = dt.getDate();
+        var currMonth = dt.getMonth();
+        var currYear = dt.getFullYear();
+        const update = {time:time, day:currDay, month:currMonth, year:currYear}
+        const updatestatus = await User.updateOne({username:disconnected_user}, {$set:{
+            userstatus: "Offline",
+            time:time,
+            day:currDay,
+            date:currDate,
+            month:currMonth,
+            year:currYear
+        }})
+        const updatedata = await User.updateMany({'friendlist.friendname': disconnected_user}, {'$set': {
+         'friendlist.$.userstatus' : "Offline"
+        }});
+       socket.broadcast.emit('user-disconnected', {user:disconnected_user, time:time, day:currDay, month:currMonth, year:currYear});
+    
+       delete users[disconnected_user];
+    }catch(err){
+        console.log(err);
+    }
+    })
      socket.on('message', async(data)=>{
         const socketid = users[data.to];
         const chatmsg = new Chatmsg({
@@ -511,5 +679,38 @@ io.on('connection', (socket)=>{
         const socketid = users[data.to];
         io.to(socketid).emit("onfocusout", {user:data.from, msg:data.msg});
     });
-
+    
+    socket.on('addFriend', async(data)=>{
+        try{
+            const reciever = data.reciever;
+            const sender = data.sender;
+            /*const status = 0;
+            const recieverdata = await User.findOne({_id:reciever});
+            const readdata = await User.findOne({username:sender});
+            const senderimage = readdata.userimage;
+            const friendsdata = {friendname:sender, friendimage: senderimage, status : status, userstatus:"Online"};
+            const savedata = await User.findOneAndUpdate({_id:reciever}, {$push:{
+                friendlist:friendsdata
+            }});
+            const messages = `${sender} has sent you friend request`;
+                const notify = new Notify({
+                    sender:sender,
+                    reciever:recieverdata.username,
+                    message:messages,
+                    status:0
+                });
+            const savenotification=await notify.save();
+            */
+        const socketid = users[reciever];
+        io.to(socketid).emit("notification", {sender:data.sender, reciever:data.reciever});
+         
+        }catch(err){
+          console.log(err);
+        }      
+    })
 })
+
+
+
+
+

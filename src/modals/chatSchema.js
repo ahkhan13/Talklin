@@ -12,6 +12,9 @@ const chatSchema = new mongoose.Schema({
     },
     time:{
         type:String,
+    },
+    status:{
+        type:String
     }
 })
 

@@ -6,7 +6,7 @@
     padding: 7px 20px 7px 20px;
     border-radius: 3px;
     font-weight: 500;
-    box-shadow: 0px 2px 2px rgba(0,0,0,0.2);
+    box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
     transition: all 0.5s ease;
   }
    .resultbtn{
@@ -17,7 +17,10 @@
     border-radius: 3px;
     font-weight: 500;
     cursor: not-allowed;
-    box-shadow: 0px 2px 3px rgba(0,0,0,0.2);
+    box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+  }
+  .resultbtn:hover{
+    cursor:not-allowed;
   }
   .accept{
    background:#833471;
@@ -33,10 +36,11 @@
    background:#1289A7;
   }
   .reject:hover{
-   background:#dcdde1;
+   background: #f9f9f9;
   }
 </style>
   {{>navbar}}
+  <div class="user" hidden>{{username}}</div> 
         <div class="container-fluid">
             <div class="row">
               <div class="offset-md-1 col-md-2">
@@ -139,3 +143,4 @@ $(document).ready(function(){
 
 });
 </script>
+<script src=""></script>

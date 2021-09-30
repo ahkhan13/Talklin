@@ -16,10 +16,29 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true
     },
+    userstatus:{
+        type:String
+    },
+    time:{
+        type:String
+    },
+    day:{
+        type:String
+    },
+    date:{
+       type:String
+    },
+    month:{
+        type:String
+    }, 
+    year:{
+        type:String
+    },
     friendlist: [{
             friendname:String,
             friendimage:String,
             status:String,
+            userstatus:String
     }],
     userimage : {
         type : String
