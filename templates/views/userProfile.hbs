@@ -1,12 +1,135 @@
 
-    <style>
-  #friend{
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel='stylesheet' href="css/style.css">
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </head>
+  <style>
+    .friend-request-heading-container{
+      flex:1;
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .friend-card-container{
+      
+      flex:3;
+    }
+    .header-container{
+      margin-top: 10vh;
+      height: 90vh;
+      display: flex;
+    }
+      .reject{
+    background: #ffffff;
+    border: 1px solid #833471;
+    color: #833471;
+    padding: 7px 20px 7px 20px;
+    border-radius: 3px;
+    font-weight: 500;
+    box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+    transition: all 0.5s ease;
+  }
+   .resultbtn{
+    background: #ffffff;
+    border: 1px solid #833471;
+    color: #833471;
+    padding: 7px 20px 7px 20px;
+    border-radius: 3px;
+    font-weight: 500;
+    cursor: not-allowed;
+    box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+  }
+  .resultbtn:hover{
+    cursor:not-allowed;
+  }
+  .accept{
+   background:#833471;
+   border:none;
+    color:snow;
+    padding: 8px 21px 8px 21px;
+    border-radius: 3px;
+    font-weight: 500; 
+    transition: all 0.5s ease;
+    box-shadow: 0px 2px 3px rgba(0,0,0,0.2);
+  }
+  .accept:hover{
+   background:#1289A7;
+  }
+  .reject:hover{
+   background: #f9f9f9;
+  }
+   .profile-container{
+       flex:2;
+
+       display: flex;
+       justify-content: center;
+       flex-direction: column;
+    }
+  .profile-pic-container{
+      flex:2;
+  }
+  .username-container{
+      flex:1;
+      display: flex;
+      justify-content: center;
+  }
+  .user-info-container{
+      flex:2;
+      display: flex;
+      justify-content: center;
+  }
+  .user-profile-pic{
+     width: 180px;
+     height: 180px;
+     margin: auto;
+     border-radius: 50%;
+     margin-top: 50px;
+  }
+  .no-user-profile-pic{
+     width: 180px;
+     height: 180px;
+     margin: auto;
+     border-radius: 50%;
+     background: #6D214F;
+     margin-top: 50px;
+  }
+  .username{
+     margin: auto;
+  }
+  .edit-profile-btn-container{
+     margin: auto;
+  }
+  .profile-desc li{
+    display: block;
+  }
+  .Online{
+      height: 11px;
+      width: 11px;
+      border-radius: 50%;
+      background:#ffd32a;
+      border: 1px solid #833471;
+      display: inline-block;
+      margin-left: -87px;
+      z-index: 5;
+    }
+  #Friend{
   background:#ffffff;
   color:#833471;
   border: 1px solid #833471;
   border-radius:3px;
   font-weight: 600;
-  margin-left: 40px;
   padding: 8px 20px 8px 20px;
   box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
   cursor: not-allowed;
@@ -18,7 +141,6 @@
   font-weight: 500;
   padding: 8px 20px 8px 20px;
   border:none;
-  margin-left: 30;
   box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -26,69 +148,91 @@
 #Add-Friend:hover{
   background:#1289A7;
 }
-    </style> 
-    {{>navbar}}
-        <div class="container">
-            <div class="row">
-              <div class="offset-md-1 col-md-3">
-                <div class="profile">
-                  {{#if userimage}}
-                  <div class="profile-img my-4">
-                    <img src="upload/{{userimage}}" alt="profile-image" class='profile-img'>   
-                  </div>
-                  {{else}}
-                  <div class="no-img"></div>
-                  {{/if}}
-                  <div class="profile-name mx-5">
-                     {{username}}
-                  </div>
-                  <button class='' id="{{friend}}">{{friend}}</button>
-                  <div class="profile-desc">
-                      <ul>
+.talk-friend-btn{
+  display: flex;
+  justify-content: flex-end;
+}
+  </style>
+<body>
+    <div class="user" hidden>{{loggeduser}}</div>
+  
+    <div class="navbar-header fixed-top">
+        <div class="navlink">
+            <ul>
+               <li><a href="home">Home</a></li>
+               <li><a href="friend-request">Friend-Requests</a></li><div class="friends-notify {{requestNotificationStatus}}"></div>
+               <li><a href="notification">Notifications</a></li><div class="notify {{acceptNotificationStatus}}"></div>
+               <li class='logout-btn'><a href='logout'>Logout</a></li>
+               <li><a href="profile"><i class="fas fa-user-circle"></i></a></li>  
+            </ul>
+        </div>
+   </div>
+      <div class="header-container">
+              <div class="profile-container">
+                     <div class="profile-pic-container">
+                         {{#if userimage}}
+                         <div class="user-profile-pic">
+                           <img src="upload/{{userimage}}" alt="profile-image" class='profile-img'> 
+                         </div> 
+                         {{else}}
+                           <div class="user-profile-pic">
+                             <img src="images/no-profile.jpg" alt="" class="profile-img">
+                           </div>
+                         {{/if}} 
+                     </div>
+                     <div class="username-container">
+                         <div class="username">
+                               <div class="profile-name my-2">{{username}}</div>
+                               <button class='' id="{{friend}}">{{friend}}</button>
+                          </div>
+                        
+                     </div>
+                     <div class="user-info-container">
+                       <div class="profile-desc">
+                        <ul>
                           <li>{{nickname}}</li>
                           <li>{{college}}</li>
                           <li>{{occupation}}</li>
                           <li>{{address}}</li>
                           <li>{{description}}</li>
-                      </ul>
+                       </ul>
                   </div>
-                </div>
-            </div>
-            
-            <div class="col-md-2">
-               <span class="friend-request-heading">
-              <i class="fas fa-user-friends mx-2"></i>Friends</span>
-            </div>
-              
-            <div class="col-md-6 my-4">
-            <div class="">
-              {{#each fetchfriend}}      
-                {{#equal status 1}}
-               <div class="friends-list-card">
-                  <div class="row">
-                     <div class="col-md-3">
-                          <a href="userProfile?id={{friendname}}">
-                        {{#if friendimage}}
-                        <div class="profile-pic">
-                            <img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
-                        </div>
-                       {{else}}
-                       <div class="no-profile-pic"></div>
-                       {{/if}}
                      </div>
-                     <div class="col-md-9">
-                       <div class='friends-name'>{{friendname}}</div></a>
-                     </div>
-                   </div>
-                
-               </div>
-             {{else}}
+              </div>
+
+              <div class="friend-request-heading-container">
+                  <span class='friends-heading position-fixed'><i class="fas fa-user-friends mx-1"></i>Friends</span>
+             </div>
+
+                   <div class="friend-card-container">
+                       <div class="friend-card-list">
+                           {{#each fetchfriend}}      
+                               {{#equal status 1}}
+                           <div class="friend-card">
+                             <div class="friend-link">
+                             <a href="userProfile?id={{friendname}}" class="suggested-link">
+                               {{#if friendimage}}
+                                <img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
+                              
+                                 {{else}}
+                                  <img src="images/no-profile.jpg" alt="" class="friends-profile-pic">
+                                {{/if}} 
+                                  <span class='friends-suggested-name mx-3'>{{friendname}}</span>
+                              </a>
+                              </div>
+                              
+                         </div>
+                          {{else}}
                {{/equal}}
                {{/each}}
-            </div>
-            </div>
-             
-           </div>
-        </div>     
+
+      
+
+                </div>
+            </div> 
+      </div>
+         
 </body>
 </html>
+
+<script src='js/chat.js'></script>

@@ -1,8 +1,8 @@
+
 $(document).ready(function(){
-   // var socket = io.connect('http://localhost:3000');
+    var socket = io.connect('http://localhost:3000');
     var username = $('.user').html();
-    alert(username);
-    //socket.emit('New-user-joined', username);
+    socket.emit('New-user-joined', username);
     $('.accept').click(function(){
         var dataId = $(this).attr('id');
         var dataname = $(this).attr('data-name');
@@ -11,8 +11,8 @@ $(document).ready(function(){
         var rejectid="reject-"+id;
         var data = {};
             data.id = id;
-        data.dataname= dataname;
-        data.dataimage= dataimage;
+            data.dataname= dataname;
+            data.dataimage= dataimage;
         $.ajax({
           method: "POST",
             data: JSON.stringify(data),
@@ -20,6 +20,7 @@ $(document).ready(function(){
           url:'http://localhost:3000/acceptFriend',		
           success: function(data){
           if(data==1){
+            socket.emit('acceptFriend', {sender:dataname, reciever:username});
             $('#'+dataId).hide();
             $('#'+rejectid).hide();
             $('#'+id).show().html('Accepted');
@@ -50,13 +51,18 @@ $(document).ready(function(){
             $('#'+dataId).hide();
             $('#'+acceptid).hide();
             $('#'+id).show().html('Rejected');
-             $('#'+id).css('background-color' , 'cyan');
-            $('#'+id).css('color' , 'red');
+             
           }else{
             alert("fail");
           }
           }
         })
         });
+        function showAcceptNotification(name){
+          $('.notify').addClass('active-notify');
+        }
+        socket.on('accept-notification', (data)=>{
+            showAcceptNotification(data.sender);
+        })
       
 })

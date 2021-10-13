@@ -9,6 +9,9 @@ const notifySchema = mongoose.Schema({
     message:{
         type:String
     },
+    image:{
+        type:String
+    },
     status:{
         type:String
     }

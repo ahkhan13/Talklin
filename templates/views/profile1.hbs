@@ -1,0 +1,124 @@
+    {{>navbar}}
+    <div class="user" hidden>{{username}}</div>
+      <div class="container">
+            <div class="row">
+              <div class="offset-md-1 col-md-3">
+                <div class="profile my-4">
+                  {{#if userimage}}
+                  <div class="profile-img">
+                    <img src="upload/{{userimage}}" alt="profile-image" class='profile-img'>   
+                  </div>
+                  {{else}}
+                  <div class="no-img"></div>
+                  {{/if}}
+                  <div class="profile-name">
+                     {{username}}
+                  </div>
+                  <button class='edit-profile-btn mx-4' id="btn" onclick="show()">Edit Profile</button>
+                  <div class="profile-desc">
+                      <ul>
+                          <li>{{nickname}}</li>
+                          <li>{{college}}</li>
+                          <li>{{occupation}}</li>
+                          <li>{{address}}</li>
+                          <li>{{description}}</li>
+                      </ul>
+                  </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <span class="friend-request-heading">
+              <i class="fas fa-user-friends mx-2"></i>Friends</span>
+            </div>
+            <div class="col-md-6">
+            <div class="">
+                {{#each findfriend}}      
+                {{#equal status 1}}  
+               <div class="friends-list-card">
+                  <div class="row">
+                     <div class="col-md-3">
+                          <a href="userProfile?id={{friendname}}">
+                        {{#if friendimage}}
+                        <div class="profile-pic">
+                            <img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
+                        </div>
+                       {{else}}
+                       <div class="no-profile-pic"></div>
+                       {{/if}}
+                     </div>
+                     <div class="col-md-9">
+                       <div class='friends-name'>{{friendname}}</div></a>
+                     </div>
+                   </div>
+                 <div class="row">
+                   <div class="col-md-3 online">
+                     Online
+                   </div>
+                    <div class="offset-md-6 col-md-3">
+                     <a href="home?friend={{friendname}}" class='talk-btn'>Let's Talk</a>
+                    </div> 
+                </div>
+               </div>
+               {{else}}
+               {{/equal}}
+               {{/each}}
+              
+            </div>
+            </div>
+           </div>
+            </div>
+      <div id="modal">
+            <div class="container">
+               <div class="row">
+                 <div class="offset-md-2 col-md-8">
+                 <div id="modal-box">
+                    <div class="row">
+                       <div class="offset-md-2 col-md-8">
+                       <form action="/profile" method="POST" enctype="multipart/form-data">
+                       <div class="form-group">
+                          <input type="file" class='form-control' name="profile-image" value=" {{userimage}} ">
+                       </div>
+                       <div class="form-group">
+                          <input type="text" class='form-control' placeholder="Nick name" name="nickname" value=" {{nickname}} ">
+                       </div>
+                       <div class="form-group">
+                          <input type="text" class='form-control' placeholder="College" name="college"  value=" {{college}} ">
+                       </div>
+                       <div class="form-group">
+                          <input type="text" class='form-control' placeholder="Occupation" name="occupation"  value=" {{occupation}} ">
+                       </div>
+                       <div class="form-group">
+                          <input type="text" class='form-control' placeholder="Full address" name="address"  value=" {{address}} ">
+                       </div>
+                       <div class="form-group">
+                          <textarea type="text" class='form-control' placeholder="Description" rows="3" name='desc'  value=""> {{description}} </textarea>
+                       </div>
+                       <div class="form-group">
+                          <input type="submit" class='form-control' value="Upload" id='profile-upload-btn'>
+                       </div>
+                       </form>
+                       <div class="form-group my-4">
+                       <button id="closebtn" onclick="hide()">CLOSE</button>
+                       </div>
+                       </div>
+                    </div> 
+                 </div> 
+               </div>
+            </div>
+         </div>
+       </div>
+       
+</body>
+</html>
+
+<script>
+    function show(){
+        var x=document.getElementById("modal");
+        x.style.display='block';
+    }
+    function hide(){
+        var x=document.getElementById("modal");
+        x.style.display='none';
+    }
+</script>
+<script src='js/chat.js'></script>

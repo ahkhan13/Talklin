@@ -1,0 +1,96 @@
+
+    <style>
+  #friend{
+  background:#ffffff;
+  color:#833471;
+  border: 1px solid #833471;
+  border-radius:3px;
+  font-weight: 600;
+  margin-left: 40px;
+  padding: 8px 20px 8px 20px;
+  box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+  cursor: not-allowed;
+}
+#Add-Friend{
+  background:#833471;
+  color:#ffffff;
+  border-radius: 3px;
+  font-weight: 500;
+  padding: 8px 20px 8px 20px;
+  border:none;
+  margin-left: 30;
+  box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+#Add-Friend:hover{
+  background:#1289A7;
+}
+    </style> 
+    {{>navbar}}
+    <div class="user" hidden>{{loggeduser}}</div>
+        <div class="container">
+            <div class="row">
+              <div class="offset-md-1 col-md-3">
+                <div class="profile">
+                  {{#if userimage}}
+                  <div class="profile-img my-4">
+                    <img src="upload/{{userimage}}" alt="profile-image" class='profile-img'>   
+                  </div>
+                  {{else}}
+                  <div class="no-img"></div>
+                  {{/if}}
+                  <div class="profile-name mx-5">
+                     {{username}}
+                  </div>
+                  <button class='' id="{{friend}}">{{friend}}</button>
+                  <div class="profile-desc">
+                      <ul>
+                          <li>{{nickname}}</li>
+                          <li>{{college}}</li>
+                          <li>{{occupation}}</li>
+                          <li>{{address}}</li>
+                          <li>{{description}}</li>
+                      </ul>
+                  </div>
+                </div>
+            </div>
+            
+            <div class="col-md-2">
+               <span class="friend-request-heading">
+              <i class="fas fa-user-friends mx-2"></i>Friends</span>
+            </div>
+              
+            <div class="col-md-6 my-4">
+            <div class="">
+              {{#each fetchfriend}}      
+                {{#equal status 1}}
+               <div class="friends-list-card">
+                  <div class="row">
+                     <div class="col-md-3">
+                          <a href="userProfile?id={{friendname}}">
+                        {{#if friendimage}}
+                        <div class="profile-pic">
+                            <img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
+                        </div>
+                       {{else}}
+                       <div class="no-profile-pic"></div>
+                       {{/if}}
+                     </div>
+                     <div class="col-md-9">
+                       <div class='friends-name'>{{friendname}}</div></a>
+                     </div>
+                   </div>
+                
+               </div>
+             {{else}}
+               {{/equal}}
+               {{/each}}
+            </div>
+            </div>
+             
+           </div>
+        </div>     
+</body>
+</html>
+<script src='js/chat.js'></script>

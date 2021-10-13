@@ -1,11 +1,11 @@
 
 $(document).ready(function(){
 var socket = io.connect('http://localhost:3000');
-var chatfriend = $('.chat-friend').html();
+var chatfriend = $('.chat-friend-name').html();
 var username = $('.user').html();
-    
-    var height = $('.msg').height();
-       $('.chat-box').scrollTop(height);
+
+var height = $('.chat-messages-container').height();
+$('.chat-container').scrollTop(height);
 
     socket.emit("New-user-joined", username);
     socket.on('user-connected', (user)=>{
@@ -13,18 +13,20 @@ var username = $('.user').html();
     });
 
     function userJoin(name, status){
-        $('.'+name).addClass('Online').removeClass('Offline').html(status);
+        $(`.friend-link .${name}`).addClass('Online').removeClass('Offline');
         $('#'+name).html(status);
     }
     function userLeft(name, status){
-        $('.'+name).removeClass('Online').addClass('Offline').html(status);
+        $(`.friend-link .${name}`).removeClass('Online').addClass('Offline');
        }
     function userLastSeen(name,status){
         $('#'+name).html("last seen today at "+status);
     }
+
     socket.on('user-disconnected', (data)=>{
         userLeft(data.user, 'Offline');
         userLastSeen(data.user, data.time);
+
     })
 
      socket.on('user-list', (users)=>{
@@ -34,7 +36,7 @@ var username = $('.user').html();
          }
      })
 
-     $('#sendbtn').click(function(){
+     $('#send-btn').click(function(){
          var msg = $('#input-msg').val();
          var dt = new Date();
          var hour = dt.getHours();
@@ -92,18 +94,22 @@ var username = $('.user').html();
     
      function appendMessage(data, status){
         //var msgg= $('.sender-msg').append(data.msg);
-        var m= `<div class="row my-1">
-        <div class="offset-md-6 col-md-6">
-          <div class="sender-msg py-1">
-           <p class='mx-3 senderMessages'>${data.msg}</p>
-            <div class="time mx-3">
-            ${data.time}
-             </div>
+        var m=`<div class="msg-container my-1">
+        <div class="space">
+         
+        </div>
+         <div class="sender-msg">
+          <div class="senderMessages mx-2">
+            ${data.msg}
           </div>
-        </div>`;
-        $(m).appendTo($('.msg'));
-        var height = $('.msg').height();
-        $('.chat-box').scrollTop(height);
+          <div class="send-time mx-2">
+              ${data.time}
+          </div>
+     </div>
+   </div>`;
+        $(m).appendTo($('.chat-messages-container'));
+        var height = $('.chat-messages-container').height();
+        $('.chat-container').scrollTop(height);
         
      }
 
@@ -133,24 +139,54 @@ var username = $('.user').html();
      socket.on("onfocusout", (data)=>{
         onfocusEvent(data, 'Online');
     })
-  
+     function showUnreadMsgCount(data){
+         $(`.talk-friend-btn .${data.user}`).fadeIn().addClass('newMsg');
+         $(`.${data.user} .new-msg-count`).html(data.UnreadMsgCount);
+
+        // $('.new-msg-notify .new-msg-count').html(data.UnreadMsgCount);
+     }
+     function showNewMsg(data){
+         var str = data.msg;
+         if(str.length>10){
+            var shortText = jQuery.trim(str).substring(0, 10)
+            .split(" ").slice(0, -1).join(" ") + "...";
+            $(`.talk-friend-btn .${data.user}`).fadeIn().addClass('newMsg');
+            $(`.${data.user} .new-msg-count`).html(shortText);
+         }
+         else{
+            $(`.talk-friend-btn .${data.user}`).fadeIn().addClass('newMsg');
+            $(`.${data.user} .new-msg-count`).html(str);
+         }
+       
+
+       // $('.new-msg-notify .new-msg-count').html(data.UnreadMsgCount);
+    }
      socket.on("message", (data)=>{
          incomingMessage(data, 'incoming');
+         showUnreadMsgCount(data);
      })
+     socket.on("messages", (data)=>{
+        incomingMessage(data, 'incoming');
+        showNewMsg(data);
+    })
 
      function incomingMessage(data, status){
-        var m= `<div class="row my-1">
-        <div class="col-md-6">
-          <div class="reciever-msg py-1">
-           <p class='mx-3 recieverMessages'> ${data.msg} </p>
-            <div class="time mx-3">
-             ${data.time}
-             </div>
-          </div>
-        </div>`;
-        $(m).appendTo($('.msg'));
-        var height = $('.msg').height();
-        $('.chat-box').scrollTop(height);
+        var m= `<div class="msg-container my-1">
+        <div class="reciever-msg my-2">
+          <div class="recieverMessages mx-2">
+            ${data.msg}
+        </div>
+        <div class="recieve-time mx-2">
+            ${data.time}
+        </div>
+      </div>
+      <div class="space">
+
+      </div>
+  </div>`;
+      $(m).appendTo($('.chat-messages-container'));
+      var height = $('.chat-messages-container').height();
+      $('.chat-container').scrollTop(height);
         
     }  
   
@@ -162,7 +198,7 @@ var username = $('.user').html();
             data.id = id;
             data.sender = username;
             data.reciever = reciever;
-            socket.emit("addFriend", data);
+            //socket.emit("addFriend", data);
             $.ajax({
               url: "/addfriend",
               method: "POST",
@@ -171,24 +207,24 @@ var username = $('.user').html();
               url:'http://localhost:3000/addFriend',		
               success: function(data){
               if(data==1){
+                socket.emit("addFriend",{sender:username, reciever:reciever});
                 $('#'+id).removeClass("addFriend");
                 $('#'+id).addClass("requested").html("Requested..");
+                
               }else{
-                alert("fail");
+                
               }
               }
             })
         });
     
     function showNotification(name){
-      $('.notification').html(name +" has been sent you a friend request").fadeIn();
-      setTimeout (function(){
-      $('.notification').fadeOut();
-      },20000);
+      $('.friends-notify').addClass('active-friends-notify');
     }
-    socket.on('notification', (data)=>{
+    socket.on('request-notification', (data)=>{
         showNotification(data.sender);
     })
+    
     
 
 })

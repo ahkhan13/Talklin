@@ -1,0 +1,222 @@
+{{>navbar}}
+
+
+
+
+
+     <div class="notification">
+          Sachin send you a friend request
+    </div>
+     <div class="user" hidden>{{username}}</div> 
+     <div class="container-fluid" style="">
+      <div class="row">
+        <div class="col-md-3 friend-suggested-heading">
+         <span class='friends-heading'><i class="fas fa-user-friends mx-2"></i>Suggested Peoples</span>
+         <div id="search-new-friends">
+          <form action="" class='my-2'>
+            <div class="form-group">
+              <input type="text" class='form-control' placeholder='Search friends...' id='search-box'>
+            </div>
+          </form>
+         </div>
+        </div>
+        {{#if chatfriend}}
+          <div class="col-md-6">
+                   <div class="chat-person-name">
+                    <div class="row">
+                      <div class="col-md-3">
+                       {{#if chatimage}}
+                        <div class="chat-profile-pic">
+                        <img src="upload/{{chatimage}}" alt="" class="chat-profile-pic">
+                        </div>
+                        {{else}}
+                       <div class="no-profile-pic"></div>
+                        {{/if}} 
+                      </div>
+                      <div class="col-md-9">
+                       <div class='chat-friends-name'>
+                         <div class="chat-friend">{{chatfriend}}</div> 
+                           <div class="user" hidden>{{username}}</div> 
+                           {{#equal userstatus 'Online'}}
+                           <div class="status" id="{{chatfriend}}">{{userstatus}}</div>
+                           {{else}}
+                           <div class="status" id="{{chatfriend}}">last seen {{lastYear}} {{lastDay}} {{lastMonth}} {{lastDate}} at {{lastTime}}</div>
+                           {{/equal}}
+                       </div>
+                      </div>
+                      </div>
+                    </div>
+                   <div class="chat-box">
+                    <div class="user-list"></div>
+                <div class="msg">
+                    {{#each chatmsg}}
+                      {{#equal sender ../username}}
+                      <div class="row my-1">
+                        <div class="offset-md-6 col-md-6">
+                          <div class="sender-msg py-1">
+                          <p class='mx-3 senderMessages'>{{messages}}</p>
+                          <div class="time mx-3">
+                          {{time}}
+                          </div>
+                      </div>
+                    </div>
+                    </div>
+                     {{else}}
+                   <div class="row my-1">
+                    <div class="col-md-6">
+                      <div class="reciever-msg py-1">
+                        <p class='mx-3 recieverMessages'>{{messages}}</p>
+                        <div class="time mx-3">
+                         {{time}}
+                        </div>
+                    </div>
+                 </div>
+                </div>
+               {{/equal}}
+               {{/each}}
+              </div>
+              <div class="chat-btn">
+              <div class="row">
+              <div class="col-md-10">
+              
+           <!-- Search form -->
+              <div class="">
+              <input class="form-control" type="text" placeholder="Type Something Here..." id='input-msg'>
+              </div>
+
+              </div>
+              <div class="col-md-2" style="">
+              <button type="button" class='btn-block' id='sendbtn'>Send</button>
+              </div>
+                  </div>
+                </div>
+               </div>
+               </div>
+          {{else}}
+          <div class="col-md-6">
+              <div class="about-vchat">
+                <div class="vchat-img">
+                    <div class="vchat"><span class="V">v</span><span class="Chat">Chat</span></div>
+                </div>
+                 <div class="vchat-description">
+                    <span>vChat</span> is a social site website where you can chat with your friends and relatives.
+                 </div>
+                 <div class="copyright">
+                     @ copyright 2021 vChat | Powered by Aftab Husain
+                 </div>
+              </div>
+          </div>
+      {{/if}}
+          <div class="col-md-3 friend-suggested-heading">
+         <span class='friends-heading'><i class="fas fa-user-friends mx-2"></i>Friends</span>
+         <div class="search-friends">
+          <form action="" class='my-2'>
+            <div class="form-group">
+              <input type="text" class='form-control search-box' placeholder='Search friends...' id='search-box'>
+            </div>
+          </form>
+         </div>
+      </div>
+   </div>
+</div>
+  <div class="container-fluid my-0">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="friend-suggested-list">
+          {{#each suggestedData}}
+           <div class="friend-suggested-card">
+            <div class="row">
+            <div class="col-md-3">
+             <a href="userProfile?id={{username}}">
+              {{#if userimage}}
+              <div class="profile-pic">
+               <img src="upload/{{userimage}}" alt="" class="friends-profile-pic">
+              </div>
+              {{else}}
+                 <div class="no-profile-pic"></div>
+              {{/if}}
+            </div>
+             <div class="col-md-9">
+               <div class='friends-suggested-name'>{{username}}</div>
+            </a>
+            </div>
+              
+          </div>
+             
+           <div class="row">
+           <div class="offset-md-6 col-md-6">
+            <button class='addFriend' id="{{_id}}" friend-name='{{username}}'>Add Friend</button>
+           </div>
+           </div>
+           </div>
+           {{/each}}
+  </div>
+   </div>
+          <div class="offset-md-6 col-md-3">
+            <div class="friends-list">
+              {{#each findfriend}}      
+                {{#equal status 1}}  
+               <div class="friends-list-card">
+                  <div class="row">
+                     <div class="col-md-3">
+                          <a href="userProfile?id={{friendname}}">
+                        {{#if friendimage}}
+                        <div class="profile-pic">
+                            <img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
+                        </div>
+                       {{else}}
+                       <div class="no-profile-pic"></div>
+                      {{/if}}
+                     </div>
+                     <div class="offset-md-2 col-md-7">
+                       <div class='friends-name'>{{friendname}}</div></a>
+                     </div>
+                   </div>
+                 <div class="row ">
+                   <div class="col-md-3 {{userstatus}} {{friendname}}">
+                     {{userstatus}}
+                   </div>
+                    <div class="offset-md-3 col-md-6">
+                     <a href="home?friend={{friendname}}" class='talk-btn mx-1' id='{{_id}}'>Let's Talk</a>
+                    </div> 
+                </div>
+               </div>
+               {{else}}
+               {{/equal}}
+               {{/each}}
+                
+               </div>  
+             </div>
+          </div>
+      </div>
+  </div>     
+</body>
+</html>
+
+<script>
+/*$(document).ready(function(){
+  $('.addFriend').click(function(){
+    var id = $(this).attr('id');
+    var data = {};
+		data.id = id;
+    $.ajax({
+      url: "/addfriend",
+      method: "POST",
+    	data: JSON.stringify(data),
+			contentType: 'application/json',
+      url:'http://localhost:3000/addFriend',		
+      success: function(data){
+      if(data==1){
+        $('#'+id).removeClass("addFriend");
+        $('#'+id).addClass("requested").html("Requested..");
+      }else{
+        alert("fail");
+      }
+      }
+    })
+    
+    });
+    
+});*/
+</script>
+<script src="js/chat.js"></script>

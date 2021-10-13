@@ -16,6 +16,20 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true
     },
+    requestNotificationStatus:{
+       type:String
+    },
+    acceptNotificationStatus:{
+        type:String
+     },
+    notifications:[
+        {
+          sender:String,
+          senderimage:String,
+          message:String,
+          status:String,
+        }
+    ],
     userstatus:{
         type:String
     },
@@ -34,12 +48,18 @@ const userSchema=new mongoose.Schema({
     year:{
         type:String
     },
-    friendlist: [{
+    friendlist: [
+        {
             friendname:String,
             friendimage:String,
             status:String,
-            userstatus:String
-    }],
+            userstatus:String,
+            newMsgStatus:String,
+            newMsgCount:String,
+            chatStatus:String,
+            inChatStatus:String,
+        }
+    ],
     userimage : {
         type : String
     },
@@ -53,7 +73,7 @@ const userSchema=new mongoose.Schema({
         type : String
     },
     address : {
-        type : String
+       type : String
     },
     description : {
         type : String
