@@ -4,6 +4,7 @@ const app=express();
 const path=require("path");
 const hbs=require("hbs");
 const cookieParser = require("cookie-parser");
+const PORT = process.env.port || 3000;
 const User = require('./modals/userSchema');
 const Profile = require('./modals/profileSchema');
 const Chatmsg = require('./modals/chatSchema');
@@ -653,7 +654,7 @@ app.post('/rejectFriend',auth, async(req,res)=>{
     }
 });
 app.use(express.static(staticPath));
-const server  = app.listen(3000,()=>{ 
+const server  = app.listen(PORT,()=>{ 
     console.log("Success at port 3000");
 })
 
