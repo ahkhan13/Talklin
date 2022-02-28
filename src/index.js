@@ -26,6 +26,7 @@ app.use(cookieParser());
 const { resolveSoa } = require("dns");
 const { profile } = require('console');
 const { SocketAddress } = require('net');
+const async = require('hbs/lib/async');
 app.use(express.urlencoded({extended:false}));
 hbs.registerHelper("equal", require("handlebars-helper-equal"));
 //console.log(process.env.SECRET_KEY); 
@@ -38,16 +39,18 @@ app.get("/register", (req,res)=>{
 });
 
 app.get("/home", auth, async(req,res)=>{
-    const friend = req.query.friend;
+    const friend = req.query.friend_name;
     const fetchNotification = await User.findOne({username:req.user.username});
    // const UnreadMsgCount = await Chatmsg.find({$and : [{sender:data.from}, {reciever:data.to}, {status:0}]}).count();
     //console.log(friend);
-    const updateChatStatus = await User.findOneAndUpdate({$and : [{username:req.user.username},{'friendlist.chatStatus':"active"}]}, {'$set': {
+    const updateChatStatus = await User.updateMany({$and : [{username:req.user.username},{'friendlist.chatStatus':"active"}]}, {'$set': {
         'friendlist.$.chatStatus': "inactive",
     }});
-    const updateinChatStatus = await User.findOneAndUpdate({$and : [{'friendlist.friendname': req.user.username},{'friendlist.inChatStatus':"active"}]}, {'$set': {
+    
+    const updateinChatStatus = await User.updateMany({$and : [{username: req.user.username},{'friendlist.inChatStatus':"active"}]}, {'$set': {
         'friendlist.$.inChatStatus': "inactive",
     }});
+    
     if(friend){
     const fetch = await User.findOne({username: friend});
         if(fetch){
@@ -203,7 +206,8 @@ app.get("/home", auth, async(req,res)=>{
     }
     else {
     const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
-    const fetchdata = await User.findOne({username:req.user.username});
+    const fetchdata = await User.findOne({username:req.user.username}).sort({'friendlist.friendname':1});
+    console.log(fetchdata);
     if(suggestedPeople){
         res.render("home", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist,requestNotificationStatus:fetchNotification.requestNotificationStatus, acceptNotificationStatus:fetchNotification.acceptNotificationStatus});   
     }else{
@@ -212,6 +216,392 @@ app.get("/home", auth, async(req,res)=>{
 }
 });
  
+
+app.get("/suggested", auth, async(req,res)=>{
+    const friend = req.query.friend;
+    const fetchNotification = await User.findOne({username:req.user.username});
+   // const UnreadMsgCount = await Chatmsg.find({$and : [{sender:data.from}, {reciever:data.to}, {status:0}]}).count();
+    //console.log(friend);
+    const updateChatStatus = await User.findOneAndUpdate({$and : [{username:req.user.username},{'friendlist.chatStatus':"active"}]}, {'$set': {
+        'friendlist.$.chatStatus': "inactive",
+    }});
+    const updateinChatStatus = await User.findOneAndUpdate({$and : [{'friendlist.friendname': req.user.username},{'friendlist.inChatStatus':"active"}]}, {'$set': {
+        'friendlist.$.inChatStatus': "inactive",
+    }});
+    if(friend){
+    const fetch = await User.findOne({username: friend});
+        if(fetch){
+            const updateChatStatus = await User.findOneAndUpdate({$and : [{username:req.user.username},{'friendlist.friendname':friend}]}, {'$set': {
+                'friendlist.$.chatStatus': "active",
+            }});
+            const updateinChatStatus = await User.findOneAndUpdate({$and : [{username: friend},{'friendlist.friendname':req.user.username}]}, {'$set': {
+                'friendlist.$.inChatStatus': "active",
+            }});
+            const updateNewMsgStatus = await User.findOneAndUpdate({$and : [{username:req.user.username},{'friendlist.friendname':friend}]}, {'$set': {
+                'friendlist.$.newMsgStatus': "noMsg",
+                'friendlist.$.newMsgCount': ""
+            }});
+            const updateReadMsgStatus = await Chatmsg.updateMany({$and : [{sender:friend}, {reciever:req.user.username}]},{$set:{
+                status:1
+            }})
+            const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
+            const fetchdata = await User.findOne({username:req.user.username});
+            var lastTime = fetch.time;
+            var lastDay = fetch.day;
+            var lastDate = fetch.date;
+            var lastMonth = fetch.month;
+            var lastYear = fetch.year;
+            var userstatus = fetch.userstatus;
+            var currTime = new Date();
+            var currDay  = currTime.getDay();
+            var currDate  = currTime.getDate();
+            var currMonth = currTime.getMonth();
+            var currYear = currTime.getFullYear();
+            console.log(userstatus);
+      
+            if(Math.abs(currDay-lastDay)==0 && Math.abs(currDate-lastDate)==0 && Math.abs(currMonth-lastMonth)==0  && Math.abs(currYear-lastYear)==0){
+                    lastDay="today";
+                    lastMonth="";
+                    lastYear="";
+                    lastDate="";
+            }else if(Math.abs(currDate-lastDate)==1 && Math.abs(currMonth-lastMonth)==0  && Math.abs(currYear-lastYear)==0){
+                lastDay="yesterday";
+                lastMonth="";
+                lastYear="";
+                lastDate="";
+            }else if(Math.abs(currYear-lastYear)==0){
+                lastYear="";
+                if(lastMonth==0){
+                    lastMonth="Jan"
+                }else if(lastMonth==1){
+                    lastMonth='Feb';
+                }
+                else if(lastMonth==2){
+                    lastMonth='Mar';
+                }else if(lastMonth==3){
+                    lastMonth='Apr';
+                }else if(lastMonth==4){
+                    lastMonth='May';
+                }else if(lastMonth==5){
+                    lastMonth='Jun';
+                }else if(lastMonth==6){
+                    lastMonth='Jul';
+                }else if(lastMonth==7){
+                    lastMonth='Aug';
+                }else if(lastMonth==8){
+                    lastMonth='Sep';
+                }else if(lastMonth==9){
+                    lastMonth='Oct';
+                }else if(lastMonth==10){
+                    lastMonth='Nov';
+                }else if(lastMonth==11){
+                    lastMonth='Dec';
+                }
+                if(lastDay==0){
+                    lastDay='Sun';
+                }else if(lastDay==1){
+                    lastDay='Mon';
+                }
+                else if(lastDay==2){
+                    lastDay='Tue';
+                }
+                else if(lastDay==3){
+                    lastDay='Wed';
+                }
+                else if(lastDay==4){
+                    lastDay='Thu';
+                }
+                else if(lastDay==5){
+                    lastDay='Fri';
+                }else if(lastDay==6){
+                    lastDay='Sat';
+                }
+            }else{
+                lastYear=lastYear;
+                if(lastMonth==0){
+                    lastMonth="Jan"
+                }else if(lastMonth==1){
+                    lastMonth='Feb';
+                }
+                else if(lastMonth==2){
+                    lastMonth='Mar';
+                }else if(lastMonth==3){
+                    lastMonth='Apr';
+                }else if(lastMonth==4){
+                    lastMonth='May';
+                }else if(lastMonth==5){
+                    lastMonth='Jun';
+                }else if(lastMonth==6){
+                    lastMonth='Jul';
+                }else if(lastMonth==7){
+                    lastMonth='Aug';
+                }else if(lastMonth==8){
+                    lastMonth='Sep';
+                }else if(lastMonth==9){
+                    lastMonth='Oct';
+                }else if(lastMonth==10){
+                    lastMonth='Nov';
+                }else if(lastMonth==11){
+                    lastMonth='Dec';
+                }
+                if(lastDay==0){
+                    lastDay='Sun';
+                }else if(lastDay==1){
+                    lastDay='Mon';
+                }
+                else if(lastDay==2){
+                    lastDay='Tue';
+                }
+                else if(lastDay==3){
+                    lastDay='Wed';
+                }
+                else if(lastDay==4){
+                    lastDay='Thu';
+                }
+                else if(lastDay==5){
+                    lastDay='Fri';
+                }else if(lastDay==6){
+                    lastDay='Sat';
+                }
+            }
+
+          
+
+            const fetchmsg = await Chatmsg.find({$or:[
+                                                {$and:[{sender:req.user.username}, {reciever:friend}]}, 
+                                                {$and:[{sender:friend}, {reciever:req.user.username}]}]});
+            res.render("suggested", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist, chatfriend : fetch.username,userstatus:userstatus, chatimage:fetch.userimage, chatmsg : fetchmsg, lastDay:lastDay,lastDate:lastDate,lastMonth:lastMonth, lastTime:lastTime, lastYear:lastYear, requestNotificationStatus:fetchNotification.requestNotificationStatus, acceptNotificationStatus:fetchNotification.acceptNotificationStatus});
+          }else{
+            const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
+            const fetchdata = await User.findOne({username:req.user.username});
+            if(suggestedPeople){
+                res.render("suggested", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist, requestNotificationStatus:fetchNotification.requestNotificationStatus, acceptNotificationStatus:fetchNotification.acceptNotificationStatus});   
+            }else{
+                res.render("suggested", {suggestedData : suggestedPeople,  findfriend: fetchdata.friendlist, requestNotificationStatus:fetchNotification.requestNotificationStatus, acceptNotificationStatus:fetchNotification.acceptNotificationStatus});
+            }
+        }
+    }
+    else {
+    const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
+    const fetchdata = await User.findOne({username:req.user.username});
+    if(suggestedPeople){
+        res.render("suggested", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist,requestNotificationStatus:fetchNotification.requestNotificationStatus, acceptNotificationStatus:fetchNotification.acceptNotificationStatus});   
+    }else{
+        res.render("suggested", {suggestedData : suggestedPeople,  findfriend: fetchdata.friendlist, requestNotificationStatus:fetchNotification.requestNotificationStatus, acceptNotificationStatus:fetchNotification.acceptNotificationStatus});
+    }
+}
+});
+
+
+app.get("/chat", auth, async(req,res)=>{
+    const friend = req.query.friend_name;
+    const fetchNotification = await User.findOne({username:req.user.username});
+   // const UnreadMsgCount = await Chatmsg.find({$and : [{sender:data.from}, {reciever:data.to}, {status:0}]}).count();
+    //console.log(friend);
+    const updateChatStatus = await User.updateMany({$and : [{username:req.user.username},{'friendlist.chatStatus':"active"}]}, {'$set': {
+        'friendlist.$.chatStatus': "inactive",
+    }});
+    
+    const updateinChatStatus = await User.updateMany({$and : [{username: req.user.username},{'friendlist.inChatStatus':"active"}]}, {'$set': {
+        'friendlist.$.inChatStatus': "inactive",
+    }});
+    
+    
+    
+    
+    if(friend){
+        const fetch = await User.findOne({username:friend});
+        const validateFriend = await User.findOne({$and : [{username:req.user.username}, {'friendlist.friendname':friend}, {'friendlist.status': '1'}]});
+        if(validateFriend){
+            
+            const updateChatStatus = await User.findOneAndUpdate({$and : [{username:req.user.username},{'friendlist.friendname':friend}]}, {'$set': {
+                'friendlist.$.chatStatus': "active",
+            }});
+            
+            /*const updateinChatStatus = await User.findOneAndUpdate({$and : [{username: friend},{'friendlist.friendname':req.user.username}]}, {'$set': {
+                'friendlist.$.inChatStatus': "active",
+            }});
+            */
+            const updateinChatStatus = await User.findOneAndUpdate({$and : [{username: req.user.username},{'friendlist.friendname':friend}]}, {'$set': {
+                'friendlist.$.inChatStatus': "active",
+            }});
+            const updateNewMsgStatus = await User.findOneAndUpdate({$and : [{username:req.user.username},{'friendlist.friendname':friend}]}, {'$set': {
+                'friendlist.$.newMsgStatus': "noMsg",
+                'friendlist.$.newMsgCount': 0
+            }});
+           
+        
+           /* const updateReadMsgStatus = await User.findOne({username:friend}, {'friendlist.friendname': 1,'friendlist.messages':1, _id:0});
+            const friendlist = updateReadMsgStatus.friendlist;
+            var messagedata;
+            const iterateObject = friendlist.map(item=>{
+                if(item.friendname==req.user.username){
+                      messagedata = item.messages;
+                }
+            }); 
+            const iterate = messagedata.map(item=>{
+                if(item.sender==friend){
+                    item.status = 1;
+                }
+            })
+             const updateReadMsg = await User.findOneAndUpdate({$and : [{username:friend}, {'friendlist.friendname':req.user.username}]},{$set:{
+                 'friendlist.$.messages': messagedata
+              }})
+              */
+           
+            const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
+            const fetchdata = await User.findOne({username:req.user.username});
+            var lastTime = fetch.time;
+            var lastDay = fetch.day;
+            var lastDate = fetch.date;
+            var lastMonth = fetch.month;
+            var lastYear = fetch.year;
+            var userstatus = fetch.userstatus;
+            var currTime = new Date();
+            var currDay  = currTime.getDay();
+            var currDate  = currTime.getDate();
+            var currMonth = currTime.getMonth();
+            var currYear = currTime.getFullYear();
+            console.log(userstatus);
+      
+            if(Math.abs(currDay-lastDay)==0 && Math.abs(currDate-lastDate)==0 && Math.abs(currMonth-lastMonth)==0  && Math.abs(currYear-lastYear)==0){
+                    lastDay="today";
+                    lastMonth="";
+                    lastYear="";
+                    lastDate="";
+            }else if(Math.abs(currDate-lastDate)==1 && Math.abs(currMonth-lastMonth)==0  && Math.abs(currYear-lastYear)==0){
+                lastDay="yesterday";
+                lastMonth="";
+                lastYear="";
+                lastDate="";
+            }else if(Math.abs(currYear-lastYear)==0){
+                lastYear="";
+                if(lastMonth==0){
+                    lastMonth="Jan"
+                }else if(lastMonth==1){
+                    lastMonth='Feb';
+                }
+                else if(lastMonth==2){
+                    lastMonth='Mar';
+                }else if(lastMonth==3){
+                    lastMonth='Apr';
+                }else if(lastMonth==4){
+                    lastMonth='May';
+                }else if(lastMonth==5){
+                    lastMonth='Jun';
+                }else if(lastMonth==6){
+                    lastMonth='Jul';
+                }else if(lastMonth==7){
+                    lastMonth='Aug';
+                }else if(lastMonth==8){
+                    lastMonth='Sep';
+                }else if(lastMonth==9){
+                    lastMonth='Oct';
+                }else if(lastMonth==10){
+                    lastMonth='Nov';
+                }else if(lastMonth==11){
+                    lastMonth='Dec';
+                }
+                if(lastDay==0){
+                    lastDay='Sun';
+                }else if(lastDay==1){
+                    lastDay='Mon';
+                }
+                else if(lastDay==2){
+                    lastDay='Tue';
+                }
+                else if(lastDay==3){
+                    lastDay='Wed';
+                }
+                else if(lastDay==4){
+                    lastDay='Thu';
+                }
+                else if(lastDay==5){
+                    lastDay='Fri';
+                }else if(lastDay==6){
+                    lastDay='Sat';
+                }
+            }else{
+                lastYear=lastYear;
+                if(lastMonth==0){
+                    lastMonth="Jan"
+                }else if(lastMonth==1){
+                    lastMonth='Feb';
+                }
+                else if(lastMonth==2){
+                    lastMonth='Mar';
+                }else if(lastMonth==3){
+                    lastMonth='Apr';
+                }else if(lastMonth==4){
+                    lastMonth='May';
+                }else if(lastMonth==5){
+                    lastMonth='Jun';
+                }else if(lastMonth==6){
+                    lastMonth='Jul';
+                }else if(lastMonth==7){
+                    lastMonth='Aug';
+                }else if(lastMonth==8){
+                    lastMonth='Sep';
+                }else if(lastMonth==9){
+                    lastMonth='Oct';
+                }else if(lastMonth==10){
+                    lastMonth='Nov';
+                }else if(lastMonth==11){
+                    lastMonth='Dec';
+                }
+                if(lastDay==0){
+                    lastDay='Sun';
+                }else if(lastDay==1){
+                    lastDay='Mon';
+                }
+                else if(lastDay==2){
+                    lastDay='Tue';
+                }
+                else if(lastDay==3){
+                    lastDay='Wed';
+                }
+                else if(lastDay==4){
+                    lastDay='Thu';
+                }
+                else if(lastDay==5){
+                    lastDay='Fri';
+                }else if(lastDay==6){
+                    lastDay='Sat';
+                }
+            }
+
+          
+
+           /*const fetchmsg = await Chatmsg.find({$or:[
+                                                {$and:[{sender:req.user.username}, {reciever:friend}]}, 
+                                                {$and:[{sender:friend}, {reciever:req.user.username}]}]});
+            */
+            
+            const fetchmsg = await User.findOne({$and: [{username:req.user.username},{'friendlist.friendname':friend}]});
+            res.render("chat", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist, chatfriend : fetch.username,userstatus:userstatus, chatimage:fetch.userimage, chatmsg : fetchmsg.friendlist, lastDay:lastDay,lastDate:lastDate,lastMonth:lastMonth, lastTime:lastTime, lastYear:lastYear, requestNotificationStatus:fetchNotification.requestNotificationStatus, acceptNotificationStatus:fetchNotification.acceptNotificationStatus});
+          }else{
+            const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
+            const fetchdata = await User.findOne({username:req.user.username});
+            if(suggestedPeople){
+                res.render("chat", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist, requestNotificationStatus:fetchNotification.requestNotificationStatus, acceptNotificationStatus:fetchNotification.acceptNotificationStatus});   
+            }else{
+                res.render("chat", {suggestedData : suggestedPeople,  findfriend: fetchdata.friendlist, requestNotificationStatus:fetchNotification.requestNotificationStatus, acceptNotificationStatus:fetchNotification.acceptNotificationStatus});
+            }
+        }
+    }
+    else {
+    const suggestedPeople = await User.find({$and : [{username : {$ne : req.user.username}}, {'friendlist.friendname' : {$ne : req.user.username}}]});
+    const fetchdata = await User.findOne({username:req.user.username});
+    if(suggestedPeople){
+        res.render("chat", {suggestedData : suggestedPeople, username:req.user.username,  findfriend: fetchdata.friendlist,requestNotificationStatus:fetchNotification.requestNotificationStatus, acceptNotificationStatus:fetchNotification.acceptNotificationStatus});   
+    }else{
+        res.render("chat", {suggestedData : suggestedPeople,  findfriend: fetchdata.friendlist, requestNotificationStatus:fetchNotification.requestNotificationStatus, acceptNotificationStatus:fetchNotification.acceptNotificationStatus});
+    }
+}
+});
+ 
+
+
 app.get("/profile", auth, async (req,res)=>{
     try{
         const fetchdata = await User.findOne({username:req.user.username});
@@ -383,7 +773,9 @@ app.post("/", async(req, res)=>{
            // const suggestedPeople = await User.find({username : {$ne : ismatchuser.username}});
            // res.render("home", {suggestedData : suggestedPeople});
           // const update = {friendname: sendername, friendimage: senderimage, status : status};
-         
+           const updateChatStatus = await User.findOneAndUpdate({$and : [{username: user},{'friendlist.chatStatus':"active"}]}, {'$set': {
+            'friendlist.$.chatStatus': "inactive",
+           }});
            const suggestedPeople = await User.find({$and : [{username : {$ne : user}}, {'friendlist.friendname' : {$ne : user}}]});
            const fetchdata = await User.findOne({username:user});
            res.render("home", {suggestedData : suggestedPeople, username:user, findfriend: fetchdata.friendlist,requestNotificationStatus:fetchdata.requestNotificationStatus, acceptNotificationStatus:fetchdata.acceptNotificationStatus});  
@@ -400,6 +792,9 @@ app.post("/", async(req, res)=>{
         const isMatchpassword = await bcrypt.compare(password,ismatchemail.userpassword);
         if(isMatchpassword){
            //const suggestedPeople = await User.find({username : {$ne : ismatchemail.userenail}});
+           const updateChatStatus = await User.findOneAndUpdate({$and : [{username:user},{'friendlist.chatStatus':"active"}]}, {'$set': {
+            'friendlist.$.chatStatus': "inactive",
+        }});
            const suggestedPeople = await User.find({$and : [{username : {$ne : ismatchemail.username}}, {'friendlist.friendname' : {$ne : ismatchemail.username}}]});
            const fetchdata = await User.findOne({username:ismatchemail.username});
            res.render("home", {suggestedData : suggestedPeople, username:ismatchemail.username, findfriend: fetchdata.friendlist, requestNotificationStatus:fetchdata.requestNotificationStatus, acceptNotificationStatus:fetchdata.acceptNotificationStatus});    
@@ -435,8 +830,8 @@ app.post('/profile', [upload, auth], async(req,res, next)=>{
           if(req.file){
             const status = 1;
             const updateimage = {friendimage:req.file.filename, friendname:req.user.username, status:status};
-            const updateinfriend = await User.findOneAndUpdate({$and : [{'friendlist.status': status},{'friendlist.friendname':req.user.username}]}, {$set : {
-                 'friendlist.$':updateimage 
+            const updateinfriend = await User.updateMany({$and : [{'friendlist.friendname':req.user.username}]}, {'$set' : {
+                 'friendlist.$.friendimage': req.file.filename
             }});
             const updatedata = await User.updateOne({username:req.user.username}, 
                 {$set : { 
@@ -562,7 +957,7 @@ app.post('/addFriend',auth, async(req,res)=>{
         if(checkrequest){
             res.send("0"); 
         }else{
-            const friendsdata = {friendname:sender, friendimage: senderimage, status : status, userstatus:"Online", newMsgStatus:"noMsg", newMsgCount:"", chatStatus:"inactive", inChatStatus:"inactive"};
+            const friendsdata = {friendname:sender, friendimage: senderimage, status : status, userstatus:"Online", newMsgStatus:"noMsg", newMsgCount:0, chatStatus:"inactive", inChatStatus:"inactive"};
             const savedata = await User.findOneAndUpdate({_id:reciever}, {$push:{
                 friendlist:friendsdata
             }});
@@ -653,6 +1048,8 @@ app.post('/rejectFriend',auth, async(req,res)=>{
       console.log(err);
     }
 });
+
+
 app.use(express.static(staticPath));
 const server  = app.listen(PORT,()=>{ 
     console.log("Success at port 3000");
@@ -760,13 +1157,23 @@ io.on('connection', (socket)=>{
                 date:currDate,
                 month:currMonth,
                 year:currYear
+
             }})
             const updatedata = await User.updateMany({'friendlist.friendname': disconnected_user}, {'$set': {
              'friendlist.$.userstatus' : "Offline"
+         
             }});
+            const updateinChatStatus = await User.updateMany({$and : [{username: disconnected_user},{'friendlist.inChatStatus':"active"}]}, {'$set': {
+                'friendlist.$.inChatStatus': "inactive",
+                'friendlist.$.chatStatus' : "inactive"
+            }});
+
+            
+            
+            
             socket.broadcast.emit('user-disconnected', {user:disconnected_user, time:time, day:currDay, month:currMonth, year:currYear});
         
-           delete users[disconnected_user];
+            delete users[disconnected_user];
         }catch(err){
             console.log(err);
         }
@@ -777,42 +1184,77 @@ io.on('connection', (socket)=>{
 
      socket.on('message', async(data)=>{
         const socketid = users[data.to];
-        const inChatStatus = await User.findOne({$and : [{username:data.from}, {'friendlist.friendname': data.to}, {'friendlist.inChatStatus': "active"}]});
-        if(inChatStatus){
-            const chatmsg = new Chatmsg({
+        const socketidfrom = users[data.from];
+        const inChatStatus = await User.findOne({username:data.to}, {'friendlist.friendname': 1, 'friendlist.inChatStatus': 1, _id:0});
+        const friendInchatStatus = inChatStatus.friendlist;
+        var activeChatStatus ;
+        const a = friendInchatStatus.map(item=>{
+            if(item.friendname==data.from){
+                activeChatStatus = item.inChatStatus;
+            }
+        })
+        console.log(activeChatStatus);
+        if(activeChatStatus == 'active'){
+           /* const chatmsg = new Chatmsg({
                 sender:data.from, 
                 reciever:data.to,
                 messages:data.msg,
                 time:data.time,
                 status:1
             });
-            const savemsg = await chatmsg.save();
-            io.to(socketid).emit("messages", {user:data.from, msg:data.msg, time:data.time});
+            */
+            const sendersidedata = {sender:data.from, reciever: data.to, message:data.msg, time:data.time, status:1};
+            const savesenderdata = await User.findOneAndUpdate({$and : [{username:data.to}, {'friendlist.friendname':data.from}]}, {$push:{
+                'friendlist.$.messages': sendersidedata
+            }});
+            const recieversidedata = {sender:data.from, reciever: data.to, message:data.msg, time:data.time, status:1};
+            const saverecieverdata = await User.findOneAndUpdate({$and : [{username:data.from}, {'friendlist.friendname':data.to}]}, {$push:{
+                'friendlist.$.messages': recieversidedata
+            }});
+            io.to(socketidfrom).emit("inchatoutgoingmessages", {user:data.from, msg:data.msg, time:data.time, reciever:data.to});
+            io.to(socketid).emit("inchatmessages", {user:data.from, msg:data.msg, time:data.time, reciever:data.to});
         }else{
-        const chatmsg = new Chatmsg({
+       /* const chatmsg = new Chatmsg({
             sender:data.from, 
             reciever:data.to,
             messages:data.msg,
             time:data.time,
             status:0
         });
+        */
+        const sendersidedata = {sender:data.from, reciever: data.to, message:data.msg, time:data.time, status:0};
+        const savesenderdata = await User.findOneAndUpdate({$and : [{username:data.to}, {'friendlist.friendname':data.from}]}, {$push:{
+            'friendlist.$.messages': sendersidedata
+        }});
+        const recieversidedata = {sender:data.from, reciever: data.to, message:data.msg, time:data.time, status:0};
+        const saverecieverdata = await User.findOneAndUpdate({$and : [{username:data.from}, {'friendlist.friendname':data.to}]}, {$push:{
+                'friendlist.$.messages': recieversidedata
+        }});
+        
         const newMsgStatus="newMsg";
-        const savemsg = await chatmsg.save();
-        const UnreadMsgCount = await Chatmsg.find({$and : [{sender:data.from}, {reciever:data.to}, {status:0}]}).count();
+        //const savemsg = await chatmsg.save();
+        //const UnreadMsgCount = await Chatmsg.find({$and : [{sender:data.from}, {reciever:data.to}, {status:0}]}).count();
+        
+        const unreadmsg = await User.findOne({username:data.to}, {'friendlist.newMsgCount': 1,'friendlist.friendname': 1, _id:0});
+            const friendlist = unreadmsg.friendlist;
+            var newmsg;
+            const iterateObject = friendlist.map(item=>{
+                if(item.friendname==data.from){
+                     newmsg = item.newMsgCount;
+                }
+            });   
+        const UnreadMsgCount = newmsg+1;
         const updateNewMsgStatus = await User.findOneAndUpdate({$and:[{username:data.to}, {'friendlist.friendname':data.from}]},{'$set':{
             'friendlist.$.newMsgStatus': newMsgStatus,
             'friendlist.$.newMsgCount':UnreadMsgCount
         }})
-        
-        if(chatmsg){
-         io.to(socketid).emit("message", {user:data.from, msg:data.msg, time:data.time, UnreadMsgCount:UnreadMsgCount});
-        }else{
-            console.log("error");
-        }
+       // io.to(socketidfrom).emit("outgoingmessages", {user:data.from, reciever:data.to, msg:data.msg, time:data.time, UnreadMsgCount:UnreadMsgCount});
+         io.to(socketid).emit("messages", {user:data.from, reciever:data.to, msg:data.msg, time:data.time, UnreadMsgCount:UnreadMsgCount});
+     
     }
      });
    
-     socket.on('onfocus', (data)=>{
+     socket.on('onfocus', (data) => {
         const socketid = users[data.to];
         io.to(socketid).emit("onfocus", {user:data.from, msg:data.msg});
     });
@@ -843,6 +1285,44 @@ io.on('connection', (socket)=>{
         }      
     })
 
+socket.on('updateUnreadMsgStatus', async(data)=>{
+        if(data.friend){
+        const checkfriend = await User.findOne({$and : [{username: data.user}, {'friendlist.friendname': data.friend}, {'friendlist.status': 1}]});
+        if(checkfriend){
+        const socketid = users[data.friend];
+        const updateReadMsgStatus = await User.findOne({username:data.friend}, {'friendlist.friendname': 1,'friendlist.messages':1, _id:0});
+        const friendlist = updateReadMsgStatus.friendlist;
+        var messagedata;
+        const iterateObject = friendlist.map(item=>{
+            if(item.friendname==data.user){
+                  messagedata = item.messages;
+            }
+        }); 
+        const iterate = messagedata.map(item=>{
+            if(item.sender==data.friend){
+                item.status = 1;
+            }
+        })
+         const updateReadMsg = await User.findOneAndUpdate({$and : [{username:data.friend}, {'friendlist.friendname':data.user}]},{$set:{
+             'friendlist.$.messages': messagedata
+          }})
+          if(updateReadMsg){
+            io.to(socketid).emit("updateUnreadMsgStatus", {user:data.user, friend:data.friend});
+        }else{
+            console.log(err);
+        }
+
+        io.to(socketid).emit("updateUnreadMsgStatus", {user:data.user, friend:data.friend});
+
+          }else{
+
+          }
+        }
+       
+    })
+
+
+    
 })
 
 

@@ -26,9 +26,9 @@
       width: 10px;
       border-radius: 50%;
       background:#ffd32a;
-      border: 1px solid #1289A7;
+      border: 1px solid #ffffff;
       display: block;
-      margin-left: -17px;
+      margin-left: -16px;
       z-index: 5;
     }
      .Offline{
@@ -36,7 +36,7 @@
       width: 10px;
       border-radius: 50%;
       display: block;
-      margin-left: -17px;
+      margin-left: -16px;
       z-index: 5;
     }
    
@@ -376,6 +376,7 @@ input[type=text]:focus {
   border-radius: 50%;
   object-fit: cover;
   transition:all 0.5s ease;
+  border: 0.5px solid cyan;
 } 
 .profile-pic{
   display: inline-block;
@@ -422,8 +423,12 @@ input[type=text]:focus {
   border: 1px solid #1289A7;
 }
 
-
-
+.sugegsted-friend-link{
+    display: none;
+  }
+ .chat-friends-container{
+    display: none;
+  }
 @media screen and (max-width: 1268px) {
   .suggested-friends-container{
     flex:1;
@@ -434,13 +439,54 @@ input[type=text]:focus {
   .chatbox-container{
     flex: 1;
   }
+  .sugegsted-friend-link{
+    display: none;
+  }
+}
+@media screen and (max-width: 768px) {
+  .suggested-friends-container{
+    display: none;
+  }
+  .suggested-friend-card-container{
+    flex:1;
+  }
+  .chatbox-container{
+    flex: 1;
+  }
+  .sugegsted-friend-link{
+    display: inline-block;
+  }
 
 }
+@media screen and (max-width: 468px) {
+  .suggested-friends-container{
+    display: none;
+  }
+  .suggested-friend-card-container{
+    flex:1;
+  }
+  .chatbox-container{
+    display: none;
+  }
+  .sugegsted-friend-link{
+    display: inline-block;
+  }
+  .friends-container{
+    display: none;
+  }
+  .chat-friends-container{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+}
+
 
 </style>
 <body>
        <div class="user" hidden>{{username}}</div> 
-      {{>navbar}}
+        {{>navbar}}
         <div class="header-container">
             <div class="suggested-friends-container">
                 <div class='suggested-friends-heading'>
@@ -501,7 +547,7 @@ input[type=text]:focus {
                          </div>
                       </div>
                       <div class="chat-container">
-                          <div class="chat-messages-container">
+                          <div class="chat-messages-container {{chatfriend}}">
                            {{#each chatmsg}}
                               {{#equal sender ../username}}
                                <div class="msg-container my-1">
@@ -560,6 +606,10 @@ input[type=text]:focus {
     </div>
     {{/if}}
  </div>
+
+
+
+
             
             <div class="friends-container">
                 <div class='suggested-friends-heading'>
@@ -590,7 +640,7 @@ input[type=text]:focus {
                                         {{newMsgCount}}
                                   </div>
                                 </div>
-                              <a href='home?friend={{friendname}}' class='talk-btn {{chatStatus}}' id="{{_id}}" friend-name='{{username}}'>Lets Talk</a>
+                              <a href='chat?friend_id_={{_id}}&friend_name={{friendname}}' class='talk-btn {{chatStatus}}' id="{{_id}}" friend-name='{{username}}'>Lets Talk</a>
                               </div>
                          </div>
                           {{else}}
@@ -604,6 +654,55 @@ input[type=text]:focus {
                 </div>
             </div>
             </div>
+
+            
+            <div class="chat-friends-container">
+                <div class='suggested-friends-heading'>
+                    <span class='friends-heading'><i class="fas fa-user-friends mx-1"></i>Friends</span>
+                     <div id="search-new-friends">
+                    <input type="text" placeholder='Search friends...' id='search-box'>
+                   </div>
+                </div>
+                  <div class="friend-card-container">
+                       <div class="friend-card-list">
+                           {{#each findfriend}}      
+                              {{#equal status 1}}  
+                           <div class="friend-card">
+                             <div class="friend-link">
+                             <a href="userProfile?id={{friendname}}" class="suggested-link">
+                               {{#if friendimage}}
+                                 <img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
+                                 {{else}}
+                                 <img src="images/no-profile.jpg" alt="" class="friends-profile-pic">
+                                {{/if}} 
+                                <div class="{{userstatus}} {{friendname}}"></div>
+                                <span class='friends-suggested-name mx-3'>{{friendname}}</span>
+                               </a>
+                              </div>
+                              <div class="talk-friend-btn">
+                                <div class="{{newMsgStatus}} {{friendname}}">
+                                  <div class="new-msg-count">
+                                        {{newMsgCount}}
+                                  </div>
+                                </div>
+                              <a href='chat?friend_id_={{_id}}&friend_name={{friendname}}' class='talk-btn {{chatStatus}}' id="{{_id}}" friend-name='{{username}}'>Lets Talk</a>
+                              </div>
+                         </div>
+                          {{else}}
+               {{/equal}}
+               {{/each}}
+                         
+                        
+                         
+                        
+
+                </div>
+            </div>
+            </div>
+
+
+            
+
 
 
 

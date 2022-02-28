@@ -51,13 +51,14 @@ $('.chat-container').scrollTop(height);
                  to:chatfriend,
                  time:time
              }
+            
              appendMessage(data, 'outgoing');
              socket.emit('message', data);
              $('#input-msg').val("");
          }
      })
 
-     $('#input-msg').keypress(function(e){
+$('#input-msg').keyup(function(e){
          if(e.key==="Enter"){
             var dt = new Date();
             var hour = dt.getHours();
@@ -72,12 +73,25 @@ $('.chat-container').scrollTop(height);
                 to:chatfriend,
                 time:time
             }
+            let dataa={
+                from:username,
+                to:chatfriend,
+                value:inputfield
+               }
             //socket.emit("userStatus", data);
             appendMessage(data, 'outgoing');
             socket.emit('message', data);
+            socket.emit("onfocusout", dataa); 
             $('#input-msg').val("");
         }
          }else{
+            var inputfield = $('#input-msg').val();
+            let data={
+            from:username,
+            to:chatfriend,
+            value:inputfield
+           }
+        socket.emit("onfocus", data); 
             
          }
      
@@ -92,7 +106,7 @@ $('.chat-container').scrollTop(height);
     })
     */
     
-     function appendMessage(data, status){
+function appendMessage(data, status){
         //var msgg= $('.sender-msg').append(data.msg);
         var m=`<div class="msg-container my-1">
         <div class="space">
@@ -103,42 +117,63 @@ $('.chat-container').scrollTop(height);
             ${data.msg}
           </div>
           <div class="send-time mx-2">
-              ${data.time}
+          <i class="far fa-check"></i> ${data.time}
           </div>
      </div>
    </div>`;
         $(m).appendTo($('.chat-messages-container'));
         var height = $('.chat-messages-container').height();
-        $('.chat-container').scrollTop(height);
-        
-     }
+        $('.chat-container').scrollTop(height);   
+  }
 
-    $('#input-msg').focus(function(){
+
+
+
+
+    var typing = false;
+    var timeout = undefined;
+   function timeoutFunction(){
+        typing = false;
         let data={
             from:username,
             to:chatfriend
         }
-     socket.emit("onfocus", data); 
-    })
-    $('#input-msg').focusout(function(){
-        let data={
+      socket.emit("onfocusout", data);
+      }
+    $('#input-msg').keyup(function(){
+    if(typing==false){
+         typing = true;
+         let data={
             from:username,
             to:chatfriend
         }
-     socket.emit("onfocusout", data); 
+      socket.emit("onfocus", data);
+      timeout = setTimeout(timeoutFunction, 5000);
+    }else{
+    clearTimeout(timeout);
+    timeout = setTimeout(timeoutFunction, 5000);
+      
+    }
     })
+    
+    
+   
+   
     function onfocusEvent(name, status){
-        $('.status').html(status);
+        $(`#status-${name.user}`).html(status);
      }
     socket.on("onfocus", (data)=>{
         onfocusEvent(data, 'Typing');
+
+    })
+    socket.on("onfocusout", (data)=>{
+        onfocusEvent(data, 'Online');
+
     })
      function onkeyupEvent(name, status){
         $('.status').html(status);
      }
-     socket.on("onfocusout", (data)=>{
-        onfocusEvent(data, 'Online');
-    })
+    
      function showUnreadMsgCount(data){
          $(`.talk-friend-btn .${data.user}`).fadeIn().addClass('newMsg');
          $(`.${data.user} .new-msg-count`).html(data.UnreadMsgCount);
@@ -161,16 +196,23 @@ $('.chat-container').scrollTop(height);
 
        // $('.new-msg-notify .new-msg-count').html(data.UnreadMsgCount);
     }
-     socket.on("message", (data)=>{
+    function inChatoutgoingMessage(data){
+    $(`.fa-check`).addClass('seen');
+    }
+    socket.on("inchatoutgoingmessages", (data)=>{
+        inChatoutgoingMessage(data);
+    })
+     socket.on("messages", (data)=>{
          incomingMessage(data, 'incoming');
          showUnreadMsgCount(data);
+       //  outgoingMessage();
      })
-     socket.on("messages", (data)=>{
+     socket.on("inchatmessages", (data)=>{
         incomingMessage(data, 'incoming');
+       // inChatoutgoingMessage();
         showNewMsg(data);
     })
-
-     function incomingMessage(data, status){
+    function incomingMessage(data, status){
         var m= `<div class="msg-container my-1">
         <div class="reciever-msg my-2">
           <div class="recieverMessages mx-2">
@@ -184,11 +226,13 @@ $('.chat-container').scrollTop(height);
 
       </div>
   </div>`;
-      $(m).appendTo($('.chat-messages-container'));
+      $(m).appendTo($(`.chat-container .${data.user}`));
       var height = $('.chat-messages-container').height();
       $('.chat-container').scrollTop(height);
         
     }  
+
+    
   
 
     $('.addFriend').click(function(){
@@ -224,7 +268,14 @@ $('.chat-container').scrollTop(height);
     socket.on('request-notification', (data)=>{
         showNotification(data.sender);
     })
-    
+    function inChat(data){
+        $(`.${data.user} .fa-check`).addClass('seen');    
+    }
+    socket.emit('updateUnreadMsgStatus', {user:username, friend:chatfriend});
+    socket.on('updateUnreadMsgStatus', (data)=>{
+        inChat(data);  
+        
+    })
     
 
 })

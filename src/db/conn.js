@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost:27017/vchat", {
+const DB = 'mongodb+srv://aftab:khanaftab@cluster0.5dkny.mongodb.net/vchat?retryWrites=true&w=majority';
+mongoose.connect(DB, {
     useNewUrlParser:true,
-    useUnifiedTopology:true
-    
+    useUnifiedTopology:true  
 }).then(()=>{
     console.log("Successfully Connected");
 }).catch((err)=>{

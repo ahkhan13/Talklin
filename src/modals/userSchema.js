@@ -55,9 +55,18 @@ const userSchema=new mongoose.Schema({
             status:String,
             userstatus:String,
             newMsgStatus:String,
-            newMsgCount:String,
+            newMsgCount:Number,
             chatStatus:String,
             inChatStatus:String,
+            messages:[
+             {
+                sender:String,
+                reciever:String,
+                message:String,
+                time:String,
+                status:String
+             }
+            ]
         }
     ],
     userimage : {

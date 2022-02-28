@@ -112,15 +112,18 @@
   }
   .profile-desc li{
     display: block;
+    color: #833471;
+    font-weight: 700;
+    font-size: 16px;
   }
   .Online{
       height: 11px;
       width: 11px;
       border-radius: 50%;
       background:#ffd32a;
-      border: 1px solid #833471;
+      border: 1px solid #ffffff;
       display: inline-block;
-      margin-left: -19px;
+      margin-left: -16px;
       z-index: 5;
     }
      .Offline{
@@ -128,28 +131,65 @@
       width: 11px;
       border-radius: 50%;
       display: inline-block;
-      margin-left: -19px;
+      margin-left: -16px;
       z-index: 5;
     }
     .talk-friend-btn{
        display: flex;
        justify-content: flex-end;
     }
+    .profile-data{
+       background: cyan;
+       color: #833471;
+    }
+::placeholder{
+   font-size: 12px;
+}
+@media screen and (max-width: 1268px) {
+  .suggested-friends-container{
+    flex:1;
+  }
+  .suggested-friend-card-container{
+    flex:1;
+  }
+  .chatbox-container{
+    flex: 1;
+  }
+  .sugegsted-friend-link{
+    display: none;
+  }
+}
+@media screen and (max-width: 768px) {
+  .header-container{
+    display: flex;
+    flex-direction: column;
+ }
+ .friend-request-heading-container{
+    justify-content: flex-start;
+     margin-left: 10px;
+ }
+  
+
+}
+@media screen and (max-width: 468px) {
+ .header-container{
+    display: flex;
+    flex-direction: column;
+ }
+ .friend-request-heading-container{
+    justify-content: flex-start;
+    margin-left: 10px;
+ }
+ .sugegsted-friend-link{
+    display: inline-block;
+  }
+
+}
   </style>
 <body>
    <div class="user" hidden>{{username}}</div>
  
-     <div class="navbar-header fixed-top">
-        <div class="navlink">
-            <ul>
-               <li><a href="home">Home</a></li>
-               <li><a href="friend-request">Friend-Requests</a></li><div class="friends-notify {{requestNotificationStatus}}"></div>
-               <li><a href="notification">Notifications</a></li><div class="notify {{acceptNotificationStatus}}"></div>
-               <li class='logout-btn'><a href='logout'>Logout</a></li>
-               <li><a href="profile"><i class="fas fa-user-circle"></i></a></li>  
-            </ul>
-        </div>
-    </div>
+      {{>navbar}}
       
       <div class="header-container">
               <div class="profile-container">
@@ -207,7 +247,7 @@
                               <div class="talk-friend-btn">
                                 
                               
-                              <a href='home?friend={{friendname}}' class='talk-btn' id="{{_id}}" friend-name='{{username}}'>Lets Talk</a>
+                              <a href='chat?friend={{friendname}}' class='talk-btn' id="{{_id}}" friend-name='{{username}}'>Lets Talk</a>
                               </div>
                          </div>
                           {{else}}
@@ -233,25 +273,45 @@
                        <div class="offset-md-2 col-md-8">
                        <form action="/profile" method="POST" enctype="multipart/form-data">
                        <div class="form-group">
-                          <input type="file" class='form-control' name="profile-image" value=" {{userimage}} ">
+                          <input type="file" class='form-control' name="profile-image"  value=" {{userimage}} ">
                        </div>
                        <div class="form-group">
-                          <input type="text" class='form-control' placeholder="Nick name" name="nickname" value=" {{nickname}} ">
+                          {{#if nickname}}
+                          <input type="text" class='form-control profile-data' placeholder="Nick name" name="nickname"  value=" {{nickname}} ">
+                          {{else}}
+                          <input type="text" class='form-control' placeholder="Nick name" name="nickname">
+                          {{/if}}
                        </div>
                        <div class="form-group">
-                          <input type="text" class='form-control' placeholder="College" name="college"  value=" {{college}} ">
+                          {{#if college}}
+                          <input type="text" class='form-control profile-data' placeholder="College" name="college"   value=" {{college}} ">
+                          {{else}}
+                          <input type="text" class='form-control' placeholder="College" name="college" >
+                          {{/if}}
                        </div>
                        <div class="form-group">
-                          <input type="text" class='form-control' placeholder="Occupation" name="occupation"  value=" {{occupation}} ">
+                          {{#if occupation}}
+                          <input type="text" class='form-control profile-data' placeholder="Occupation" name="occupation"   value=" {{occupation}} ">
+                          {{else}}
+                           <input type="text" class='form-control' placeholder="Occupation" name="occupation">
+                          {{/if}}
                        </div>
                        <div class="form-group">
-                          <input type="text" class='form-control' placeholder="Full address" name="address"  value=" {{address}} ">
+                          {{#if address}}
+                          <input type="text" class='form-control profile-data' placeholder="Full address" name="address"   value=" {{address}} ">
+                          {{else}}
+                          <input type="text" class='form-control' placeholder="Full address" name="address">
+                          {{/if}}
                        </div>
                        <div class="form-group">
-                          <textarea type="text" class='form-control' placeholder="Description" rows="3" name='desc'  value=""> {{description}} </textarea>
+                          {{#if description}}
+                          <textarea type="text" class='form-control profile-data' placeholder="Description" rows="3" name='desc'   value=""> {{description}} </textarea>
+                          {{else}}
+                           <textarea type="text" class='form-control' placeholder="Description" rows="3" name='desc'   value=""></textarea>
+                          {{/if}}
                        </div>
                        <div class="form-group">
-                          <input type="submit" class='form-control' value="Upload" id='profile-upload-btn'>
+                          <input type="submit" class='form-control'  value="Upload" id='profile-upload-btn'>
                        </div>
                        </form>
                        <div class="form-group my-4">

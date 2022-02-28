@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vChat</title>
+<link rel='stylesheet' href="css/style.css">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://cdn.socket.io/3.1.3/socket.io.min.js" integrity="sha384-cPwlPLvBTa3sKAgddT6krw0cJat7egBga3DJepJyrLl4Q9/5WLra3rrnMcyTyOnh" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    .Online{
+      height: 10px;
+      width: 10px;
+      border-radius: 50%;
+      background:#ffd32a;
+      border: 1px solid #ffffff;
+      display: block;
+      margin-left: -16px;
+      z-index: 5;
+    }
+     .Offline{
+      height: 10px;
+      width: 10px;
+      border-radius: 50%;
+      display: block;
+      margin-left: -16px;
+      z-index: 5;
+    }
+   
+    a:hover{
+        text-decoration: none;
+    }
+    .header{
+        height: 10vh;
+        width:100%;
+        background:;
+        padding: 10px;
+    }
+    .header-container{
+        display: flex;
+        margin-top: 10vh;
+        height: 90vh;
+    }
+
+
+    /* suggested friend css   */
+
+    #search-box{
+     background: #F9F9F9;
+     border:none;
+     margin-top: 6px;
+     border-radius:5px;
+     color:#833471;
+     padding: 6px 10px 6px 10px;
+     width: 100%;
+    }
+    #search-box::placeholder{
+   color:#C0C0C0;
+    }
+    .friends-heading{
+    font-size:20px;
+    font-weight:600;
+    }
+    
+    .suggested-friends-container{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .suggested-friend-card-list{
+        width: 100%;
+        height: auto;
+        padding: 10px;
+    }
+    
+    .suggested-friends-heading{
+      color: black;
+      width: 100%;
+      height: auto;
+      padding: 10px;
+    }
+    .suggested-friend-card-container{
+        width: 100%;
+        height: 100%;
+        overflow-y: scroll;
+    }
+    .suggested-friend-card{
+     padding:10px;
+     box-shadow:0px 1px 1px rgba(0,0,0,0.1); 
+     margin-bottom:2px;
+
+
+    }
+    .suggested-friend-link{
+          margin-bottom: 5px;
+        
+    }
+    .suggested-link{
+      display: flex;
+    }
+    .add-friend-btn{
+        display: flex;
+        justify-content: flex-end;
+    }
+    .profile-pic{
+    
+    }
+
+
+    
+.friends-suggested-name{
+  color: #1289A7;
+  font-size:16px;
+  margin-left: 3px;
+  font-weight:520;
+  line-height: 20px;
+  text-decoration:none;
+  transition: all 0.3s ease;
+}
+.friends-suggested-name:hover{
+  color:#1289A7;
+}
+
+.friends-profile-pic{
+  display: inline-block;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition:all 0.5s ease;
+} 
+.addFriend{
+  background:#833471;
+  border: 1px solid #833471;
+  color: #ffffff;
+  padding: 6px 15px 6px 15px;
+  border-radius: 3px;
+  font-weight: 460;
+  font-size: 14px;
+  box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+  transition: all 0.4s ease;
+}
+.addFriend:hover{
+  background: #1289A7;
+  border: 1px solid #1289A7;
+}
+
+
+/* chat box csss */
+
+
+.chatbox-container{
+        margin-top: 5px;
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+}
+.chat-box-header-card{
+       display: flex;
+       padding: 10px;
+       background: #f7f7f7;
+       box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+       height: auto;
+}
+.status{
+    color: blue;
+}
+.img-container{
+    flex:1;
+}
+.chat-friend-name{
+    color: #1289A7;
+    font-size: 20px;
+    font-weight: 600;
+}
+.chat-friend-container{
+       margin-left: 10px ;
+       flex:7;
+}
+.chat-container{
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background: #ffffff;
+    overflow-y: scroll;
+    
+}
+.chat-profile-pic{
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+} 
+.msg-container{
+    display: flex;
+}
+.space{
+    flex:1;
+    width: 50px;
+}
+.sender-msg{
+  background:#1289A7;
+  padding:4px;
+  width:auto;
+  display:block;
+  border-radius:40px;
+  max-width: 450px;
+}
+.reciever-msg{
+  background: #f7f7f7;;
+  padding:5px;
+  width: auto;
+  display:block;
+  border-radius:40px;
+  z-index:2;
+  max-width: 450px;
+}
+.senderMessages{
+  font-size: 12px;
+  color: #ffffff;
+  font-weight:500;
+}
+.recieverMessages{
+  font-size: 12px;
+  color:#546268;
+  font-weight:500;
+}
+.recieve-time{
+    font-size: 9px;
+    font-weight: 300;
+    color:#fd79a8;
+}
+.send-time{
+    font-size: 9px;
+    color:#00cec9;
+}
+
+.send-btn-container{
+    background:#ffffff;
+    height: 12vh;
+    display: flex;
+    padding: 20px;
+    align-content: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+
+}
+.input-box{
+    flex:7;
+}
+.input-box input{
+    width: 100%;
+    display: inline-block;
+    padding: 8px 12px 8px 12px;
+    border-radius: 0px;
+    border: 1px solid #c0c0c0;
+    color: #833471;
+}
+input::placeholder{
+    color: #c0c0c0;
+    font-weight: 450;
+}
+input[type=text]:focus {
+  border-radius: 0;
+  outline: none;
+}
+.send-btn{
+    flex: 1;
+}
+.fa-paper-plane{
+    width: 100%;
+    font-size: 20px;
+    padding: 5px 12px 5px 12px;
+    
+    display: inline-block;
+}
+.send-message-btn{
+  background:#ff793f;
+  border: 1px solid #ff793f;
+  color: #ffffff;
+  padding: 5px 18px 5px 18px;
+  font-weight: 460;
+  font-size: 14px;
+  box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+  transition: all 0.4s ease;
+}
+.send-message-btn:hover,.send-message-btn:active{
+  background: #cd6133;
+  border: 1px solid #cd6133;
+  outline: none;
+}
+
+
+/* friend list css */
+
+.friends-container{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .friend-card-list{
+        width: 100%;
+        height: auto;
+        padding: 10px;
+    }
+    
+    .friend-card-container{
+        width: 100%;
+        height: 100%;
+        overflow-y: scroll;
+    }
+    .friend-card{
+     padding:10px;
+     box-shadow:0px 1px 1px rgba(0,0,0,0.1); 
+     margin-bottom:2px;
+
+    }
+    .friend-link{
+          margin-bottom: 5px;
+          display: flex;
+          justify-content: flex-start;
+        
+    }
+    .talk-friend-btn{
+        display: flex;
+        justify-content: space-between;
+    }
+    
+  
+   .newMsg{
+     background: darkgray;
+     border-radius: 2px;
+     width: auto;
+     height: 22px;
+     padding: 4px;
+     display: flex;
+     margin-left: 14px;
+     justify-content: center;
+   }
+   .new-msg-count{
+     font-size: 11px;
+     color: #ffffff;
+   }
+.friends-suggested-name{
+  color: #833471;
+  font-size:16px;
+  font-weight:520;
+  margin-left: 3px;
+  text-decoration:none;
+  transition: all 0.3s ease;
+  display: inline-block;
+
+}
+.friends-suggested-name:hover{
+  color:#1289A7;
+}
+
+.friends-profile-pic{
+  display: inline-block;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  transition:all 0.5s ease;
+} 
+.profile-pic{
+  display: inline-block;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+}
+.talk-btn{
+  background:#833471;
+  border: 1px solid #833471;
+  color: #ffffff;
+  padding: 6px 18px 6px 18px;
+  border-radius: 3px;
+  font-weight: 460;
+  font-size: 14px;
+  box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+.inactive{
+  background:#833471;
+  border: 1px solid #833471;
+  color: #ffffff;
+  padding: 6px 18px 6px 18px;
+  border-radius: 3px;
+  font-weight: 460;
+  font-size: 14px;
+  box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+.active{
+  background: #ffffff;
+  color: #1289A7;
+  border: 1px solid #1289A7;
+  padding: 6px 18px 6px 18px;
+  border-radius: 3px;
+  font-weight: 460;
+  font-size: 14px;
+  box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+.talk-btn:hover{
+  background: #ffffff;
+  color: #1289A7;
+  border: 1px solid #1289A7;
+}
+
+.sugegsted-friend-link{
+    display: none;
+  }
+ .chat-friends-container{
+    display: none;
+  }
+@media screen and (max-width: 1268px) {
+  .suggested-friends-container{
+    flex:1;
+  }
+  .suggested-friend-card-container{
+    flex:1;
+  }
+  .chatbox-container{
+    flex: 1;
+  }
+  .sugegsted-friend-link{
+    display: none;
+  }
+}
+@media screen and (max-width: 768px) {
+  .suggested-friends-container{
+    display: none;
+  }
+  .suggested-friend-card-container{
+    flex:1;
+  }
+  .chatbox-container{
+    flex: 1;
+  }
+  .sugegsted-friend-link{
+    display: inline-block;
+  }
+
+}
+@media screen and (max-width: 468px) {
+  .suggested-friends-container{
+    display: flex;
+    flex:1;
+  }
+  .suggested-friend-card-container{
+    flex: 1;
+  }
+  .chatbox-container{
+    display: none;
+  }
+  .sugegsted-friend-link{
+    display: inline-block;
+  }
+  .friends-container{
+    display: none;
+  }
+  .chat-friends-container{
+    display: none;
+  }
+
+}
+
+
+</style>
+<body>
+       <div class="user" hidden>{{username}}</div> 
+         {{>navbar}}
+        <div class="header-container">
+            <div class="suggested-friends-container">
+                <div class='suggested-friends-heading'>
+                    <span class='friends-heading'><i class="fas fa-users mx-1"></i>Suggested Peoples</span>
+                     <div id="search-new-friends">
+                        <input type="text"  placeholder='Search friends...' id='search-box'>
+                     </div>
+                 </div>
+                  <div class="suggested-friend-card-container">
+                        <div class="suggested-friend-card-list">
+                                {{#each suggestedData}}
+
+
+                          <div class="suggested-friend-card">
+                               <div class="suggested-friend-link">
+                                 <a href="userProfile?id={{username}}" class="suggested-link">
+                                 {{#if userimage}}
+                                
+                                 <img src="upload/{{userimage}}" alt="" class="friends-profile-pic">
+                                 
+                                {{else}}
+                                 <img src="images/no-profile.jpg" alt="" class="friends-profile-pic">
+                                 {{/if}}
+                                <span class='friends-suggested-name mx-3'>{{username}}</span>
+                               </a>
+                              </div>
+                              <div class="add-friend-btn">
+                              <button class='addFriend' id="{{_id}}" friend-name='{{username}}'>Add Friend</button>
+                              </div>
+                         </div>
+
+                        {{/each}}
+                        
+
+
+                </div>
+            </div>
+            </div>
+
+            <div class="chatbox-container">
+
+                 {{#if chatfriend}}
+                      <div class="chat-box-header-card">
+                           {{#if chatimage}}
+                           <div class="img-container">
+                             <img src="upload/{{chatimage}}" alt="" class="chat-profile-pic">
+                            </div>
+                            {{else}}
+                             <img src="images/no-profile.jpg" alt="" class="chat-profile-pic">
+                            {{/if}} 
+                         <div class="chat-friend-container">
+                            <div class="chat-friend-name">{{chatfriend}}</div>
+                           {{#equal userstatus 'Online'}}
+                           <div class="status" id="{{chatfriend}}">{{userstatus}}</div>
+                           {{else}}
+                           <div class="status" id="{{chatfriend}}">last seen {{lastYear}} {{lastDay}} {{lastMonth}} {{lastDate}} at {{lastTime}}</div>
+                           {{/equal}}
+                         </div>
+                      </div>
+                      <div class="chat-container">
+                          <div class="chat-messages-container {{chatfriend}}">
+                           {{#each chatmsg}}
+                              {{#equal sender ../username}}
+                               <div class="msg-container my-1">
+                            <div class="space">
+                             
+                            </div>
+                             <div class="sender-msg">
+                              <div class="senderMessages mx-2">
+                                {{messages}}
+                              </div>
+                              <div class="send-time mx-2">
+                                  {{time}}
+                              </div>
+                         </div>
+                       </div>
+                            
+                        {{else}}
+                        <div class="msg-container my-0">
+                              <div class="reciever-msg my-1">
+                                <div class="recieverMessages mx-2">
+                                  {{messages}}
+                              </div>
+                              <div class="recieve-time mx-2">
+                                  {{time}}
+                              </div>
+                            </div>
+                            <div class="space">
+
+                            </div>
+                        </div>
+                       
+                   {{/equal}}
+               {{/each}}
+                    
+    </div>
+</div>
+    <div class="send-btn-container">
+          <div class="input-box">
+              <input type="text" placeholder="Write messages here ..." id='input-msg'>
+          </div>
+          <div class="send-btn">
+              <button class="send-message-btn"><i class="fa fa-paper-plane" aria-hidden="true" id='send-btn'></i></button>
+          </div>
+    </div>
+{{else}}
+    <div class="about-vchat">
+                <div class="vchat-img">
+                    <div class="vchat"><span class="V">v</span><span class="Chat">Chat</span></div>
+                </div>
+                 <div class="vchat-description">
+                    <span>vChat</span> is a social site website where you can chat with your friends and relatives.
+                 </div>
+                 <div class="copyright">
+                     @ copyright 2021 vChat | Powered by Aftab Husain
+                 </div>
+    </div>
+    {{/if}}
+ </div>
+
+
+
+
+            
+            <div class="friends-container">
+                <div class='suggested-friends-heading'>
+                    <span class='friends-heading'><i class="fas fa-user-friends mx-1"></i>Friends</span>
+                     <div id="search-new-friends">
+                    <input type="text" placeholder='Search friends...' id='search-box'>
+                   </div>
+                </div>
+                  <div class="friend-card-container">
+                       <div class="friend-card-list">
+                           {{#each findfriend}}      
+                              {{#equal status 1}}  
+                           <div class="friend-card">
+                             <div class="friend-link">
+                             <a href="userProfile?id={{friendname}}" class="suggested-link">
+                               {{#if friendimage}}
+                                 <img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
+                                 {{else}}
+                                 <img src="images/no-profile.jpg" alt="" class="friends-profile-pic">
+                                {{/if}} 
+                                <div class="{{userstatus}} {{friendname}}"></div>
+                                <span class='friends-suggested-name mx-3'>{{friendname}}</span>
+                               </a>
+                              </div>
+                              <div class="talk-friend-btn">
+                                <div class="{{newMsgStatus}} {{friendname}}">
+                                  <div class="new-msg-count">
+                                        {{newMsgCount}}
+                                  </div>
+                                </div>
+                              <a href='chat?friend={{friendname}}' class='talk-btn {{chatStatus}}' id="{{_id}}" friend-name='{{username}}'>Lets Talk</a>
+                              </div>
+                         </div>
+                          {{else}}
+               {{/equal}}
+               {{/each}}
+                         
+                        
+                         
+                        
+
+                </div>
+            </div>
+            </div>
+
+            
+            <div class="chat-friends-container">
+                <div class='suggested-friends-heading'>
+                    <span class='friends-heading'><i class="fas fa-user-friends mx-1"></i>Friends</span>
+                     <div id="search-new-friends">
+                    <input type="text" placeholder='Search friends...' id='search-box'>
+                   </div>
+                </div>
+                  <div class="friend-card-container">
+                       <div class="friend-card-list">
+                           {{#each findfriend}}      
+                              {{#equal status 1}}  
+                           <div class="friend-card">
+                             <div class="friend-link">
+                             <a href="userProfile?id={{friendname}}" class="suggested-link">
+                               {{#if friendimage}}
+                                 <img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
+                                 {{else}}
+                                 <img src="images/no-profile.jpg" alt="" class="friends-profile-pic">
+                                {{/if}} 
+                                <div class="{{userstatus}} {{friendname}}"></div>
+                                <span class='friends-suggested-name mx-3'>{{friendname}}</span>
+                               </a>
+                              </div>
+                              <div class="talk-friend-btn">
+                                <div class="{{newMsgStatus}} {{friendname}}">
+                                  <div class="new-msg-count">
+                                        {{newMsgCount}}
+                                  </div>
+                                </div>
+                              <a href='chat?friend={{friendname}}' class='talk-btn {{chatStatus}}' id="{{_id}}" friend-name='{{username}}'>Lets Talk</a>
+                              </div>
+                         </div>
+                          {{else}}
+               {{/equal}}
+               {{/each}}
+                         
+                        
+                         
+                        
+
+                </div>
+            </div>
+            </div>
+
+
+            
+
+
+
+
+        </div>
+    
+</body>
+</html>
+<script src="js/chat.js"></script>

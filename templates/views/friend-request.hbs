@@ -22,7 +22,8 @@
       margin-top: 10px;
     }
     .friend-request-container{
-      flex:2;
+      flex:3;
+      justify-content: space-around;
       
     }
     .header-container{
@@ -70,6 +71,51 @@
   .reject:hover{
    background: #f9f9f9;
   }
+  @media screen and (max-width: 768px) {
+   .header-container{
+    display: flex;
+    flex-direction: column;
+ }
+ .friend-request-heading-container{
+  flex:1;
+  justify-content: start;
+   margin-left: 10px;
+ }
+ .friend-request-container{
+   flex:23;
+
+ }
+  
+
+}
+@media screen and (max-width: 468px) {
+ .header-container{
+    display: flex;
+    flex-direction: column;
+ }
+ .friend-request-heading-container{
+   justify-content: start;
+   margin-left: 10px;
+  flex:1;
+ }
+ .friend-request-container{
+   flex:23;
+
+ }
+ .sugegsted-friend-link{
+    display: inline-block;
+  }
+ .accept{
+   font-size: 12px;
+ }
+ .reject{
+   font-size: 12px;
+ }
+ .friends-suggested-name{
+   font-size: 18px;
+ }
+
+}
   </style>
 <body>
    <div class="user" hidden>{{username}}</div>
@@ -87,12 +133,12 @@
                             <div class="suggested-friend-link">
                              <a href="userProfile?id={{friendname}}" class="suggested-link">
                                 {{#if friendimage}}
-                                 <img src="images/back.jpg" alt="" class="friends-profile-pic">
+                                 <img src="upload/{{friendimage}}" alt="" class="friends-profile-pic">
                                  
                                 {{else}}
                                   <img src="images/no-profile.jpg" alt="" class="friends-profile-pic">
                                 {{/if}}
-                                <span class='friends-suggested-name mx-1'>{{friendname}}</span>
+                                <span class='friends-suggested-name mx-2'>{{friendname}}</span>
                               </a>
                               </div>
                               <div class="add-friend-btn">

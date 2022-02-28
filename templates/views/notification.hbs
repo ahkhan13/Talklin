@@ -44,17 +44,7 @@
 <body>
   
 <div class="user" hidden>{{username}}</div>
-    <div class="navbar-header fixed-top">
-        <div class="navlink">
-            <ul>
-               <li><a href="home">Home</a></li>
-               <li><a href="friend-request">Friend-Requests</a></li><div class="friends-notify {{requestNotificationStatus}}"></div>
-               <li><a href="notification">Notifications</a></li><div class="notify {{acceptNotificationStatus}}"></div>
-               <li class='logout-btn'><a href='logout'>Logout</a></li>
-               <li><a href="profile"><i class="fas fa-user-circle"></i></a></li>  
-            </ul>
-        </div>
-</div>
+  {{>navbar}}
 <div class="container">
     <div class="row">
         <div class="col-md-12">
