@@ -14,13 +14,13 @@ $('.chat-container').scrollTop(height);
 
     function userJoin(name, status){
         $(`.friend-link .${name}`).addClass('Online').removeClass('Offline');
-        $('#'+name).html(status);
+        $('#status-'+name).html(status);
     }
     function userLeft(name, status){
         $(`.friend-link .${name}`).removeClass('Online').addClass('Offline');
        }
     function userLastSeen(name,status){
-        $('#'+name).html("last seen today at "+status);
+        $('#status-'+name).html("last seen today at "+status);
     }
 
     socket.on('user-disconnected', (data)=>{

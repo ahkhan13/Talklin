@@ -942,42 +942,34 @@ border-radius:0px;
   border: 0px solid green;
   padding: 30px;
   display: flex;
-  justify-content: center;
   flex-direction: column;
 }
-.vchat-img{
-  margin: auto;
-  width: 250px;
-  height: 250px;
-  background:#f1f2f6;
-  box-shadow: 0px 1px 1px rgba(0,0,0,0.1);
-  border-radius: 50%;
-  
-}
 .vchat-img .vchat{
-  text-align: center;
-  margin-top: 70px;
-  font-size: 60px;
-  font-weight: 900;
+  font-size: 55px;
+  font-weight: 850;
 }
 .V{
   color: green;
+  margin-left:-38px;
+}
+.talk{
+  color: green;
+  font-size: 22px;
+  font-weight: 650;
 }
 .Chat{
   color: #833471;
 }
-.vchat-description{
-  font-family:Georgia, 'Times New Roman', Times, serif;
-  margin-top: 20px;
-  color: #485460;
-  font-size: 16px;
-  font-weight: 600;
-}
-.vchat-description span{
-  font-size: 22px;
+.lin{
   color: #833471;
+  font-size: 22px;
   font-weight: 650;
 }
+.vchat-description{
+  font-size: 15px;
+  font-weight: 600;
+}
+
 .copyright{
   margin: auto;
   font-size: 11px;
