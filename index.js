@@ -31,7 +31,7 @@ app.use(express.urlencoded({extended:false}));
 hbs.registerHelper("equal", require("handlebars-helper-equal"));
 //console.log(process.env.SECRET_KEY); 
 
-app.get("talklin.herokuapp.com/", (req,res)=>{
+app.get("/", (req,res)=>{
     res.render("index");
 });
 app.get("/register", (req,res)=>{
